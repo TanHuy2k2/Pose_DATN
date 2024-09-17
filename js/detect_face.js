@@ -6,64 +6,130 @@ const drawingUtils = window;
 const container = document.getElementById('container');
 
 let camera = null;
+let faceDetection = null;
+let count = 0;
 
 function onResults(results) {
-    // Draw the overlays.
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-    drawRectangle(
-        canvasCtx, results.detections[0].boundingBox,
-        {color: 'blue', lineWidth: 2, fillColor: '#00000000'});
-    canvasCtx.restore();
-  }
+    // Set the canvas size to match the video dimensions
+    const ar_age = [];
+    const ar_gender = [];
+    const age = "";
+    const gender = "";
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const pixelRatio = window.devicePixelRatio || 1;
 
-const faceDetection = new FaceDetection({locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
-}});
-faceDetection.setOptions({
-    model: 'short',
-    minDetectionConfidence: 0.5
-});
+    // Set the canvas resolution (high-DPI support)
+    canvasElement.width = videoWidth * pixelRatio;
+    canvasElement.height = videoHeight * pixelRatio;
+    canvasElement.style.width = `${videoWidth}px`;
+    canvasElement.style.height = `${videoHeight}px`;
+    
+    // Scale the drawing context to account for pixel ratio
+    canvasCtx.scale(pixelRatio, pixelRatio);
+
+    // Draw the image from the results
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, videoWidth, videoHeight);
+    
+    // Draw the results image maintaining the aspect ratio
+    canvasCtx.drawImage(results.image, 0, 0, videoWidth, videoHeight);
+
+    if (results.detections && results.detections.length > 0) {
+        const detection = results.detections[0];
+
+        if (detection){
+            drawingUtils.drawRectangle(
+                canvasCtx, detection.boundingBox,
+                {color: 'blue', lineWidth: 2, fillColor: '#00000000'});
+
+            // Extract the face based on bounding box dimensions
+            const {xCenter, yCenter, width, height} = detection.boundingBox;
+
+            const startX = (xCenter - (width / 2)) * videoWidth;
+            const startY = (yCenter - (height / 2)) * videoHeight;
+            const faceWidth = width * videoWidth;
+            const faceHeight = height * videoHeight;
+
+            const face = canvasCtx.getImageData(startX, startY, faceWidth, faceHeight);
+            
+            if (face && count < 3 ){
+
+                // Convert image data to a tensor
+                const tensorImage = tf.browser.fromPixels(face);
+
+                const result = predict(tensorImage);
+
+                console.log(result);
+                console.log(result[0]);
+                console.log(result[1]);
+
+                // ar_age.push(result[0]);
+                // ar_gender.push(result[1]);
+
+                // console.log(ar_age);
+                // console.log(ar_gender);
+            }
+            count += 1;
+        }
+        
+    }
+    canvasCtx.restore();
+}
+
+// Initialize FaceDetection instance
+function initializeFaceDetection() {
+    faceDetection = new FaceDetection({locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+    }});
+
+    faceDetection.setOptions({
+        model: 'short',
+        minDetectionConfidence: 0.5
+    });
+
+    faceDetection.onResults(onResults);
+}
 
 // Function to start the camera
 function startCamera() {
-    faceDetection.onResults(onResults);
-    if (video){
-        camera = new Camera(video, {
-            onFrame: async () => {
-                await faceDetection.send({image: video});
-            }
-        });
-        camera.start();      
-        toggleButton.textContent = 'Turn Off';
-        toggleButton.classList.remove('off');
-        enableCanvas();
-    }
+    initializeFaceDetection();
+    count = 0;
+    camera = new Camera(video, {
+        onFrame: async () => {
+            await faceDetection.send({image: video});
+        }
+    });
+    camera.start();      
+    toggleButton.textContent = 'Turn Off';
+    toggleButton.classList.remove('off');
+    enableCanvas();
 }
 
 // Function to stop the camera
 function stopCamera() {
     if (camera) {
-        toggleButton.textContent = 'Turn On';
-        toggleButton.classList.add('off');
-        video.remove();
         camera.stop();
-        disableCanvas();
         camera = null;
     }
+    if (faceDetection){
+        faceDetection.close();
+    }
+    toggleButton.textContent = 'Turn On';
+    toggleButton.classList.add('off');
+    disableCanvas();
 }
 
 // Disable the canvas (clear and visually disable it)
 function disableCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.classList.add('disabled');
-  }
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasElement.classList.add('disabled');
+}
 
-  // Enable the canvas (remove disabled state)
-  function enableCanvas() {
-    canvas.classList.remove('disabled');
-  }
+// Enable the canvas (remove disabled state)
+function enableCanvas() {
+    canvasElement.classList.remove('disabled');
+}
 
 // Toggle button functionality
 toggleButton.addEventListener('click', () => {
