@@ -1,20 +1,68 @@
 const video = document.getElementById('camera');
 const toggleButton = document.getElementById('toggleButton');
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
-const canvasCtx = canvasElement.getContext('2d');
+const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
+const canvas_Loading = canvasElement.getContext('2d', { willReadFrequently: true });
 const drawingUtils = window;
 const container = document.getElementById('container');
 
 let camera = null;
 let faceDetection = null;
 let count = 0;
+let check = false
+const ar_age = [];
+const ar_gender = [];
 
-function onResults(results) {
+async function checkFace(face) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = face.width;
+    canvas.height = face.height;
+    context.putImageData(face, 0, 0);
+
+    const imageBase64 = canvas.toDataURL('image/jpeg', 1.0);
+
+    // Send the base64 image to the server
+    const response = await fetch('http://localhost:2000/predictAgeGender', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: imageBase64 })
+
+    });
+
+    const result = await response.json();
+    return result;    
+}
+
+async function put2DB(face, gender, age) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = face.width;
+    canvas.height = face.height;
+    context.putImageData(face, 0, 0);
+
+    const imageBase64 = canvas.toDataURL('image/jpeg', 1.0);
+
+    // Send the base64 image to the server
+    const response = await fetch('http://localhost:2000/put2DB', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: imageBase64, gender: gender, age: age})
+
+    });
+
+    const result = await response.json();
+    return result;
+}
+
+async function onResults(results) {
     // Set the canvas size to match the video dimensions
-    const ar_age = [];
-    const ar_gender = [];
-    const age = "";
-    const gender = "";
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
     const pixelRatio = window.devicePixelRatio || 1;
@@ -52,27 +100,37 @@ function onResults(results) {
             const faceHeight = height * videoHeight;
 
             const face = canvasCtx.getImageData(startX, startY, faceWidth, faceHeight);
+ 
+            if (face && check == false){
+                const a = await checkFace(face)
+                if (a['check'] == 'True'){
+                    // window.location.href('http://localhost:3000/fontend/main.html')
+                    console.log(a)
+                    check = true
+                }else{
+                    if (face && count < 3 ){
+                        // Convert image data to a tensor
+                        const tensorImage = tf.browser.fromPixels(face);
+
+                        const result = await predict(tensorImage);
+
+                        ar_age.push(result[0]);
+                        ar_gender.push(result[1]);
             
-            if (face && count < 3 ){
+                    }
+                    if (ar_age.length == 3 & ar_gender.length == 3){
+                        const age = mostCommon(ar_age);
+                        const gender = mostCommon(ar_gender);
 
-                // Convert image data to a tensor
-                const tensorImage = tf.browser.fromPixels(face);
+                        const res = await put2DB(face, gender, age)
 
-                const result = predict(tensorImage);
-
-                console.log(result);
-                console.log(result[0]);
-                console.log(result[1]);
-
-                // ar_age.push(result[0]);
-                // ar_gender.push(result[1]);
-
-                // console.log(ar_age);
-                // console.log(ar_gender);
+                        console.log(res)
+                        check = true
+                    }
+                } 
             }
             count += 1;
         }
-        
     }
     canvasCtx.restore();
 }
@@ -139,3 +197,21 @@ toggleButton.addEventListener('click', () => {
         startCamera();
     }
 });
+
+function mostCommon(arr) {
+    // Create a Map to count occurrences
+    const counter = new Map();
+  
+    // Count occurrences of each element
+    arr.forEach(element => {
+        counter.set(element, (counter.get(element) || 0) + 1);
+    });
+  
+    // Convert Map to array of [key, value] pairs and sort by occurrences
+    const sorted = [...counter.entries()].sort(function(a, b){return b - a});
+  
+    // Return the most common element(s)
+    mostCommonElement = sorted[0][0];
+  
+    return mostCommonElement;
+}
