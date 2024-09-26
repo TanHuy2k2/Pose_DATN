@@ -8,6 +8,48 @@ body, html {
     align-items: center;
     background-color: #f0f0f0;
 }
+.main-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 10px; /* Space between the form and video/canvas */
+}
+
+/* Form styling */
+.form-container {
+    width: 200px;
+    margin-left: 0; /* Align the form on the far left */
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    left: 0; /* Keep the form on the left edge of the page */
+}
+
+/* Input field styling */
+.form-container input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Button styling */
+.form-container button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-container button:hover {
+    background-color: #45a049;
+}
+
 #container {
     display: flex;
     /* align-items: center; */
@@ -15,6 +57,9 @@ body, html {
 #camera {
     width: 100px; /* Adjust the width as needed */
     height: 100px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .output_canvas{
     width: 640px;

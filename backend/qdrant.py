@@ -72,9 +72,10 @@ def load_face_data(query_vector):
     if not search_result:
         return None
     else:
+        name_label = search_result["name"]
         gender_label = search_result["gender"]
         age_label = search_result["age"]
-        return gender_label, age_label
+        return name_label, gender_label, age_label
     
 # Put to DB
 def save_face_data(vector, payload):

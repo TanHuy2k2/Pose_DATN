@@ -19,7 +19,7 @@ def img_to_encoding(image):
     embedding = DeepFace.represent(image, "Facenet", enforce_detection=False)[0]["embedding"]
     return embedding
 
-@app.route('/predictAgeGender', methods=['POST'])
+@app.route('/checkface', methods=['POST'])
 def process_image():
     data = request.get_json()
     image_base64 = data.get('image')
@@ -43,18 +43,19 @@ def process_image():
     check = verify(face_embed)
 
     if check: 
-        gender, age = load_face_data(face_embed)
-        return jsonify({'check': 'True', 'age': age, 'gender': gender})
+        name, gender, age = load_face_data(face_embed)
+        return jsonify({'check': 'True','name': name, 'age': age, 'gender': gender})
     
-    return jsonify({'check': 'False', 'age': 0, 'gender': 0})
+    return jsonify({'check': 'False','name': "" ,'age': "", 'gender': ""})
 
 @app.route('/put2DB', methods=['POST'])
 def putDB():
     data = request.get_json()
     image_base64 = data.get('image')
+    name = data.get('name')
     age = data.get('age')
     gender = data.get('gender')
-    
+
     if not image_base64:
         return jsonify({'error': 'No image'}), 400
     
@@ -77,9 +78,9 @@ def putDB():
 
     face_embed = img_to_encoding(image_array)
 
-    save_face_data(face_embed, {"gender": str(gender), "age": str(age)})
+    save_face_data(face_embed, {"name": name, "gender": str(gender), "age": str(age)})
 
-    return jsonify({'check': 'True', 'age': age, 'gender': gender})
+    return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender})
 
 
 if __name__ == '__main__':

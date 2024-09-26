@@ -2,64 +2,68 @@ const video = document.getElementById('camera');
 const toggleButton = document.getElementById('toggleButton');
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
-const canvas_Loading = canvasElement.getContext('2d', { willReadFrequently: true });
 const drawingUtils = window;
 const container = document.getElementById('container');
 
+const formContainer = document.querySelector('.form-container');
+let loginForm = document.getElementById("form");
+const input_name = document.getElementById('name');
+const input_age = document.getElementById('age');
+const input_gender = document.getElementById('gender');
+
+let startAngle = 0;
+const radius = 90;
+
 let camera = null;
 let faceDetection = null;
-let count = 0;
 let check = false
+let face;
 const ar_age = [];
 const ar_gender = [];
+formContainer.style.display = 'none';
+let isLoading = true;
 
-async function checkFace(face) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = face.width;
-    canvas.height = face.height;
-    context.putImageData(face, 0, 0);
+// Worker
+const worker = new Worker('js/worker.js');
 
-    const imageBase64 = canvas.toDataURL('image/jpeg', 1.0);
+// Function to handle results from worker
+worker.onmessage = function(e) {
+    const { type, result } = e.data;
 
-    // Send the base64 image to the server
-    const response = await fetch('http://localhost:2000/predictAgeGender', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ image: imageBase64 })
+    console.log(type)
 
-    });
-
-    const result = await response.json();
-    return result;    
-}
-
-async function put2DB(face, gender, age) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = face.width;
-    canvas.height = face.height;
-    context.putImageData(face, 0, 0);
-
-    const imageBase64 = canvas.toDataURL('image/jpeg', 1.0);
-
-    // Send the base64 image to the server
-    const response = await fetch('http://localhost:2000/put2DB', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ image: imageBase64, gender: gender, age: age})
-
-    });
-
-    const result = await response.json();
-    return result;
-}
+    if (type === 'checkFaceResult') {
+        if (result['check'] === 'True') {
+            // Redirect after successful face check
+            document.cookie = "name=" + result['name'];
+            document.cookie = "age=" + result['age'];
+            document.cookie = "gender=" + result['gender'];
+            location.href = 'http://localhost:3000/fontend/index.html';
+            check = true
+        } else {
+            if (face) {
+                // Collect prediction results
+                check = false
+                const tensorImage = tf.browser.fromPixels(face);
+                predictAndStore(tensorImage);
+                
+            }
+        }
+    }
+    
+    if (type === 'put2DBResult') {
+        if (result['check'] === 'True') {
+            // Redirect after successfully saving to DB
+            document.cookie = "name=" + result['name'];
+            document.cookie = "age=" + result['age'];
+            document.cookie = "gender=" + result['gender'];
+            location.href = 'http://localhost:3000/fontend/index.html';
+            worker.terminate();
+        } else {
+            console.error('Error while saving data to the database.');
+        }
+    }
+};
 
 async function onResults(results) {
     // Set the canvas size to match the video dimensions
@@ -99,40 +103,53 @@ async function onResults(results) {
             const faceWidth = width * videoWidth;
             const faceHeight = height * videoHeight;
 
-            const face = canvasCtx.getImageData(startX, startY, faceWidth, faceHeight);
+            face = canvasCtx.getImageData(startX, startY, faceWidth, faceHeight);
  
-            if (face && check == false){
-                const a = await checkFace(face)
-                if (a['check'] == 'True'){
-                    // window.location.href('http://localhost:3000/fontend/main.html')
-                    console.log(a)
-                    check = true
-                }else{
-                    if (face && count < 3 ){
-                        // Convert image data to a tensor
-                        const tensorImage = tf.browser.fromPixels(face);
+            if (face && !check){
 
-                        const result = await predict(tensorImage);
+                const canvas_1 = document.createElement('canvas');
+                const context_1 = canvas_1.getContext('2d');
+                canvas_1.width = face.width;
+                canvas_1.height = face.height;
+                context_1.putImageData(face, 0, 0);
+                const imageBase64 = canvas_1.toDataURL('image/jpeg', 1.0);
 
-                        ar_age.push(result[0]);
-                        ar_gender.push(result[1]);
-            
-                    }
-                    if (ar_age.length == 3 & ar_gender.length == 3){
-                        const age = mostCommon(ar_age);
-                        const gender = mostCommon(ar_gender);
+                worker.postMessage({ type: 'checkFace', image64: imageBase64 });
 
-                        const res = await put2DB(face, gender, age)
-
-                        console.log(res)
-                        check = true
-                    }
-                } 
+                check = true;
             }
-            count += 1;
         }
     }
     canvasCtx.restore();
+}
+
+
+async function predictAndStore(tensorImage) {
+    // Assuming you have a predict function that returns [age, gender] predictions
+    const result = await predict(tensorImage);
+
+    // Push the results to the arrays
+    ar_age.push(result[0]);  // Assuming result[0] is age
+    ar_gender.push(result[1]);  // Assuming result[1] is gender
+
+    // If both arrays have 3 predictions each, compute the most common values
+    if (ar_age.length == 3 && ar_gender.length == 3) {
+
+        console.log(ar_age)
+
+        const age = mostCommon(ar_age);
+        const gender = mostCommon(ar_gender);
+
+        // Display the form and populate it with predicted values
+        formContainer.style.display = 'block';
+
+        input_age.value = age;
+        input_gender.value = gender;
+
+        // Mark the face as processed and stop the camera
+        check = true;
+        stopCamera();
+    }
 }
 
 // Initialize FaceDetection instance
@@ -143,7 +160,7 @@ function initializeFaceDetection() {
 
     faceDetection.setOptions({
         model: 'short',
-        minDetectionConfidence: 0.5
+        minDetectionConfidence: 0.7
     });
 
     faceDetection.onResults(onResults);
@@ -152,12 +169,17 @@ function initializeFaceDetection() {
 // Function to start the camera
 function startCamera() {
     initializeFaceDetection();
+    isLoading = false;
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     count = 0;
     camera = new Camera(video, {
         onFrame: async () => {
             await faceDetection.send({image: video});
         }
     });
+    document.cookie = "name=";
+    document.cookie = "age=";
+    document.cookie = "gender=";
     camera.start();      
     toggleButton.textContent = 'Turn Off';
     toggleButton.classList.remove('off');
@@ -175,18 +197,19 @@ function stopCamera() {
     }
     toggleButton.textContent = 'Turn On';
     toggleButton.classList.add('off');
-    disableCanvas();
+    drawLoadingCircle();
 }
 
 // Disable the canvas (clear and visually disable it)
 function disableCanvas() {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    canvasElement.classList.add('disabled');
+    // canvasElement.classList.add('disabled');
 }
 
 // Enable the canvas (remove disabled state)
 function enableCanvas() {
-    canvasElement.classList.remove('disabled');
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    // canvasElement.classList.remove('disabled');
 }
 
 // Toggle button functionality
@@ -201,17 +224,86 @@ toggleButton.addEventListener('click', () => {
 function mostCommon(arr) {
     // Create a Map to count occurrences
     const counter = new Map();
-  
+
     // Count occurrences of each element
     arr.forEach(element => {
         counter.set(element, (counter.get(element) || 0) + 1);
     });
-  
-    // Convert Map to array of [key, value] pairs and sort by occurrences
-    const sorted = [...counter.entries()].sort(function(a, b){return b - a});
-  
-    // Return the most common element(s)
-    mostCommonElement = sorted[0][0];
-  
-    return mostCommonElement;
+
+    // Determine the maximum count
+    let maxCount = 0;
+    counter.forEach(count => {
+        if (count > maxCount) {
+            maxCount = count;
+        }
+    });
+
+    // Get all elements with the maximum count
+    const mostCommonElements = [...counter.entries()]
+        .filter(([_, count]) => count === maxCount)
+        .map(([element]) => element);
+
+    return mostCommonElements;
 }
+
+function drawLoadingCircle() {
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const pixelRatio = window.devicePixelRatio || 1;
+
+    // Set the canvas resolution (high-DPI support)
+    canvasElement.width = videoWidth * pixelRatio;
+    canvasElement.height = videoHeight * pixelRatio;
+    canvasElement.style.width = `${videoWidth}px`;
+    canvasElement.style.height = `${videoHeight}px`;
+    
+    // Scale the drawing context to account for pixel ratio
+    canvasCtx.scale(pixelRatio, pixelRatio);
+    
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Clear canvas before drawing
+
+    canvasCtx.beginPath();  
+    canvasCtx.arc(canvasElement.width / 2, canvasElement.height / 2, radius, startAngle, startAngle + Math.PI / 2); // Draw a quarter circle
+    canvasCtx.lineWidth = 5;
+    canvasCtx.strokeStyle = 'blue';
+    canvasCtx.stroke();
+
+    canvasCtx.font = "15px Times New Roman";
+    canvasCtx.fillStyle = 'black';
+    canvasCtx.textAlign = 'center';
+    canvasCtx.textBaseline = 'middle';
+    canvasCtx.fillText("Please complete form, it left of you", canvasElement.width / 2, canvasElement.height / 2);
+
+    // Update the angle to simulate rotation
+    startAngle += 0.1; // Adjust this value to control speed
+    if (startAngle >= Math.PI * 2) {
+      startAngle = 0;
+    }
+
+    if (isLoading) {
+        // Call the drawLoadingCircle function again to create an animation loop
+        requestAnimationFrame(drawLoadingCircle);
+    }
+}
+
+loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    // Retrieve user inputs for name, gender, and age
+    const name = input_name.value;
+    const gender = input_gender.value;
+    const age = input_age.value;
+
+    // Send the face data, name, gender, and age to the worker
+    if (face && name && gender && age) {
+        const canvas_1 = document.createElement('canvas');
+        const context_1 = canvas_1.getContext('2d');
+        canvas_1.width = face.width;
+        canvas_1.height = face.height;
+        context_1.putImageData(face, 0, 0);
+        const imageBase64 = canvas_1.toDataURL('image/jpeg', 1.0);
+
+        worker.postMessage({ type: 'put2DB', image64: imageBase64 , age_db: age, gender_db: gender, name_db: name});
+    } else {
+        console.log('Missing data not detected.');
+    }
+});

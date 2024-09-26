@@ -1,8 +1,3 @@
-// Include the ONNX Runtime library
-if (!window.ort) {
-    throw new Error("ONNX Runtime library is not loaded.");
-}
-
 async function predict(imageTensor) {
     // Load the ONNX model
     const session = await ort.InferenceSession.create('../model/MobileNetV3L.onnx');

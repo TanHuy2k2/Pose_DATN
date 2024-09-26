@@ -15,11 +15,30 @@
     <link rel="stylesheet" href="/fontend/css/style.css">
 </head>
 <body>
-    <div id="container">
-        <video id="camera" autoplay playsinline></video>
-        <canvas class="output_canvas" class = "disabled"></canvas>
+    <div class="main-container">
+        <div class="form-container">
+            <form action="" id="form">
+                <label>Name: </label>
+                <input type="user" id="name" placeholder="Your name">
+
+                <label>Age: </label>
+                <input type="text" id="age" disabled>
+
+                <label>Gender:</label>
+                <input type="text" id="gender" disabled>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="container">
+            <video id="camera" autoplay playsinline></video>
+            <canvas class="output_canvas"></canvas>
+        </div>
     </div>
+
     <button id="toggleButton" class="off">Turn On</button>
 </body>
 <script src="/fontend/js/detect_face.js"></script>
+
 </html>
