@@ -14,17 +14,17 @@ const input_gender = document.getElementById('gender');
 let startAngle = 0;
 const radius = 90;
 
+const ar_age = [];
+const ar_gender = [];
 let camera = null;
 let faceDetection = null;
 let check = false
 let face;
-const ar_age = [];
-const ar_gender = [];
 formContainer.style.display = 'none';
 let isLoading = true;
 
 // Worker
-const worker = new Worker('js/worker.js');
+let worker = new Worker('js/worker.js');;
 
 // Function to handle results from worker
 worker.onmessage = function(e) {
@@ -46,7 +46,6 @@ worker.onmessage = function(e) {
                 check = false
                 const tensorImage = tf.browser.fromPixels(face);
                 predictAndStore(tensorImage);
-                
             }
         }
     }
@@ -123,7 +122,6 @@ async function onResults(results) {
     canvasCtx.restore();
 }
 
-
 async function predictAndStore(tensorImage) {
     // Assuming you have a predict function that returns [age, gender] predictions
     const result = await predict(tensorImage);
@@ -169,7 +167,10 @@ function initializeFaceDetection() {
 // Function to start the camera
 function startCamera() {
     initializeFaceDetection();
-    isLoading = false;
+    check = false;
+    if (isLoading){
+        isLoading = false;
+    }
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     count = 0;
     camera = new Camera(video, {
@@ -183,11 +184,11 @@ function startCamera() {
     camera.start();      
     toggleButton.textContent = 'Turn Off';
     toggleButton.classList.remove('off');
-    enableCanvas();
 }
 
 // Function to stop the camera
 function stopCamera() {
+    isLoading = true;
     if (camera) {
         camera.stop();
         camera = null;
@@ -198,18 +199,6 @@ function stopCamera() {
     toggleButton.textContent = 'Turn On';
     toggleButton.classList.add('off');
     drawLoadingCircle();
-}
-
-// Disable the canvas (clear and visually disable it)
-function disableCanvas() {
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    // canvasElement.classList.add('disabled');
-}
-
-// Enable the canvas (remove disabled state)
-function enableCanvas() {
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    // canvasElement.classList.remove('disabled');
 }
 
 // Toggle button functionality
@@ -272,7 +261,7 @@ function drawLoadingCircle() {
     canvasCtx.fillStyle = 'black';
     canvasCtx.textAlign = 'center';
     canvasCtx.textBaseline = 'middle';
-    canvasCtx.fillText("Please complete form, it left of you", canvasElement.width / 2, canvasElement.height / 2);
+    canvasCtx.fillText("Loading", canvasElement.width / 2, canvasElement.height / 2);
 
     // Update the angle to simulate rotation
     startAngle += 0.1; // Adjust this value to control speed
