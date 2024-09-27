@@ -4,16 +4,34 @@
   <meta charset="utf-8">
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d/control_utils_3d.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose" crossorigin="anonymous"></script>
+
+  <title>Website</title>
+  <link rel="stylesheet" href="/fontend/css/style_index.css">
 </head>
 
 <body>
-  <div class="container">
-    <video class="input_video"></video>
-    <canvas class="output_canvas" width="600px" height="400px"></canvas>
-  </div>
+  <div class="main-container">
+    <div class="form-container">
+        <form action="" id="form">
+            <label>Name: </label>
+            <input type="user" id="name" disabled>
+
+            <label>Age: </label>
+            <input type="text" id="age" disabled>
+
+            <label>Gender:</label>
+            <input type="text" id="gender" disabled>
+        </form>
+    </div>
+
+    <div id="container">
+        <video id="camera" class="input_video" playsinline></video>
+        <canvas class="output_canvas"></canvas>
+    </div>
+</div>
+
 </body>
-<script src="/fontend/js/pose_estimation.js"></script>
+  <script src="/fontend/js/pose_estimation.js"></script>
 </html>
