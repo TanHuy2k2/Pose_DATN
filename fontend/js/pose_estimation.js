@@ -5,6 +5,8 @@ const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
 const input_name = document.getElementById('name');
 const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
+const input_height = document.getElementById('height');
+const input_weight = document.getElementById('weight');
 
 function getCookies() {
     const cookies = document.cookie.split(';');
@@ -17,6 +19,8 @@ function getCookies() {
     input_name.value = cookieObj['name']
     input_age.value = cookieObj['age'];
     input_gender.value = cookieObj['gender'];
+    input_height.value = cookieObj['height'];
+    input_weight.value = cookieObj['weight'];
 }
     
 function onResults(results) {

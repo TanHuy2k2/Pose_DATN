@@ -1,6 +1,6 @@
 // Listen for messages from the main thread
 onmessage = async function(e) {
-    const { type, name_db, gender_db, age_db, image64 } = e.data;
+    const { type, name_db, gender_db, age_db, height_db, weight_db,  image64 } = e.data;
 
     if (type === 'checkFace') {
         // Perform face check
@@ -24,7 +24,7 @@ onmessage = async function(e) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ image: image64, name: name_db, gender: gender_db, age: age_db })
+            body: JSON.stringify({ image: image64, name: name_db, gender: gender_db, age: age_db, height: height_db, weight: weight_db })
         });
 
         const result = await response.json();

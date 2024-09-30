@@ -10,6 +10,8 @@ let loginForm = document.getElementById("form");
 const input_name = document.getElementById('name');
 const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
+const input_height = document.getElementById('height');
+const input_weight = document.getElementById('weight');
 
 let startAngle = 0;
 const radius = 90;
@@ -38,6 +40,8 @@ worker.onmessage = function(e) {
             document.cookie = "name=" + result['name'];
             document.cookie = "age=" + result['age'];
             document.cookie = "gender=" + result['gender'];
+            document.cookie = "height=" + result['height'];
+            document.cookie = "weight=" + result['weight'];
             location.href = 'http://localhost:3000/fontend/index.html';
             check = true
         } else {
@@ -56,6 +60,8 @@ worker.onmessage = function(e) {
             document.cookie = "name=" + result['name'];
             document.cookie = "age=" + result['age'];
             document.cookie = "gender=" + result['gender'];
+            document.cookie = "height=" + result['height'];
+            document.cookie = "weight=" + result['weight'];
             location.href = 'http://localhost:3000/fontend/index.html';
             worker.terminate();
         } else {
@@ -181,6 +187,8 @@ function startCamera() {
     document.cookie = "name=";
     document.cookie = "age=";
     document.cookie = "gender=";
+    document.cookie = "height=";
+    document.cookie = "weight=";
     camera.start();      
     toggleButton.textContent = 'Turn Off';
     toggleButton.classList.remove('off');
@@ -281,6 +289,8 @@ loginForm.addEventListener("submit", async (e) => {
     const name = input_name.value;
     const gender = input_gender.value;
     const age = input_age.value;
+    const height = input_height.value;
+    const weight = input_weight.value;
 
     // Send the face data, name, gender, and age to the worker
     if (face && name && gender && age) {
@@ -291,7 +301,7 @@ loginForm.addEventListener("submit", async (e) => {
         context_1.putImageData(face, 0, 0);
         const imageBase64 = canvas_1.toDataURL('image/jpeg', 1.0);
 
-        worker.postMessage({ type: 'put2DB', image64: imageBase64 , age_db: age, gender_db: gender, name_db: name});
+        worker.postMessage({ type: 'put2DB', image64: imageBase64 , age_db: age, gender_db: gender, name_db: name, height_db: height, weight_db: weight});
     } else {
         console.log('Missing data not detected.');
     }
