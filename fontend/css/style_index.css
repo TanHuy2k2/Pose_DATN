@@ -13,6 +13,7 @@ body, html {
     justify-content: flex-end;
     align-items: flex-start;
     gap: 10px; /* Space between the form and video/canvas */
+    margin-right: -90px;
 }
 
 /* Form styling */
@@ -49,7 +50,7 @@ body, html {
 
 /* Input field styling */
 .form-container input {
-    width: 70%;
+    width: 90%;
     padding: 10px;
     margin: 10px 0;
     border: none;
@@ -95,15 +96,15 @@ body, html {
 }
 #video_check {
     align-self: self-end;
-    width: 320px; 
-    height: 240px ;
+    width: 150px; 
+    height: 150px ;
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .output_canvas{
-    width: 100px; /* Adjust the width as needed */
-    height: 100px;
+    width: 320px; /* Adjust the width as needed */
+    height: 240px;
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
