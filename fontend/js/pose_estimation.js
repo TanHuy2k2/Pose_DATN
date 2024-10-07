@@ -36,9 +36,9 @@ function onResults(results) {
     
     // Only overwrite existing pixels.
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
-                     {color: '#00FF00', lineWidth: 2});
+                     {color: '#00FF00', lineWidth: 1});
     drawLandmarks(canvasCtx, results.poseLandmarks,
-                    {color: '#FF0000', lineWidth: 0.5});
+                    {color: '#FF0000', lineWidth: 0.2});
 
     canvasCtx.restore();
 }
@@ -48,6 +48,7 @@ const pose = new Pose({locateFile: (file) => {
 }});
 pose.setOptions({
   modelComplexity: 0,
+  static_image_mode: false, 
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5,
