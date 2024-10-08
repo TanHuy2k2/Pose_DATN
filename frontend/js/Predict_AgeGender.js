@@ -1,6 +1,6 @@
 async function predict(imageTensor) {
     // Load the ONNX model
-    const session = await ort.InferenceSession.create('/model/MobileNetV3L.onnx');
+    const session = await ort.InferenceSession.create('../model/MobileNetV3L.onnx');
 
     // Preprocess the image using TensorFlow.js
     let imgPre = imageTensor
@@ -30,8 +30,8 @@ async function predict(imageTensor) {
     const gender = Math.round(Number(get_gender));
 
     const [genderRes, ageRes] = await Promise.all([
-        fetch('/model/dic_labels_age.json'),
-        fetch('/model/dic_labels_age.json')
+        fetch('../model/dic_labels_gender.json'),
+        fetch('../model/dic_labels_age.json')
     ]);
     
     const labelsGender = await genderRes.json();
@@ -41,6 +41,9 @@ async function predict(imageTensor) {
     const gender_predict = labelsGender[String(gender)] || 'Unknown';
     const age_predict = labelsAge[String(age)] || 'Unknown';
 
+    // get one value each
+    
+
     // Return the predictions
-    return [age_predict, gender_predict ];
+    return [age_predict, gender_predict];
 }

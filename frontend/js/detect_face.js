@@ -74,7 +74,7 @@ async function onResults(results) {
     // Set the canvas size to match the video dimensions
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-    const pixelRatio = window.devicePixelRatio || 1;
+    const pixelRatio = 1;
 
     // Set the canvas resolution (high-DPI support)
     canvasElement.width = videoWidth * pixelRatio;
@@ -158,13 +158,14 @@ async function predictAndStore(tensorImage) {
 
 // Initialize FaceDetection instance
 function initializeFaceDetection() {
+
     faceDetection = new FaceDetection({locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
     }});
 
     faceDetection.setOptions({
         model: 'short',
-        minDetectionConfidence: 0.7
+        minDetectionConfidence: 0.5
     });
 
     faceDetection.onResults(onResults);
@@ -246,7 +247,7 @@ function mostCommon(arr) {
 function drawLoadingCircle() {
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-    const pixelRatio = window.devicePixelRatio || 1;
+    const pixelRatio = 1;
 
     // Set the canvas resolution (high-DPI support)
     canvasElement.width = videoWidth * pixelRatio;
