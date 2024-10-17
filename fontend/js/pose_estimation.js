@@ -5,8 +5,8 @@ const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
 const input_name = document.getElementById('name');
 const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
-const input_height = document.getElementById('height');
-const input_weight = document.getElementById('weight');
+const input_bmi = document.getElementById('bmi');
+const input_level = document.getElementById('level');
 
 function getCookies() {
     const cookies = document.cookie.split(';');
@@ -19,8 +19,8 @@ function getCookies() {
     input_name.value = cookieObj['name']
     input_age.value = cookieObj['age'];
     input_gender.value = cookieObj['gender'];
-    input_height.value = cookieObj['height'];
-    input_weight.value = cookieObj['weight'];
+    input_bmi.value = cookieObj['bmi'];
+    input_level.value = cookieObj['level'];
 }
 
 function calculate_angle(a, b, c){
@@ -83,7 +83,6 @@ function onResults(results) {
 
         // Calculate angle
         const angle = calculate_angle(shoulder, elbow, wrist);
-        console.log(angle);
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
@@ -98,7 +97,7 @@ const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
 }});
 pose.setOptions({
-  modelComplexity: 1,
+  modelComplexity: 0,
   static_image_mode: false, 
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,

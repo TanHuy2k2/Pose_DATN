@@ -19,7 +19,7 @@
         <div class="form-container">
             <form action="" id="form">
                 <label>Name: </label>
-                <input type="user" id="name" placeholder="Your name">
+                <input type="text" id="name" placeholder="Your name">
 
                 <label>Age: </label>
                 <input type="text" id="age" disabled>
@@ -32,6 +32,23 @@
 
                 <label>Weight: (kg)</label>
                 <input type="text" id="weight" placeholder="Your weight (kg)">
+
+                <label>Please select your level:</label>
+                <div class="radio">
+                    <label for="beginner">
+                        <input type="radio" id="level" name="level" value="Beginner" checked>
+                        Beginner
+                    </label>
+                    <label for="normal">
+                        <input type="radio" id="level" name="level" value="Normal">
+                        Normal
+                    </label>
+                    <label for="advanced">
+                        <input type="radio" id="level" name="level" value="Advanced">
+                        Advanced
+                    </label>
+                </div>
+
 
                 <button type="submit">Submit</button>
             </form>

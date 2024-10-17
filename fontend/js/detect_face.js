@@ -12,6 +12,7 @@ const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
 const input_height = document.getElementById('height');
 const input_weight = document.getElementById('weight');
+const input_level = document.querySelector('input[name="level"]:checked');
 
 let startAngle = 0;
 const radius = 90;
@@ -40,8 +41,8 @@ worker.onmessage = function(e) {
             document.cookie = "name=" + result['name'];
             document.cookie = "age=" + result['age'];
             document.cookie = "gender=" + result['gender'];
-            document.cookie = "height=" + result['height'];
-            document.cookie = "weight=" + result['weight'];
+            document.cookie = "level=" + result['level'];
+            document.cookie = "bmi=" + result['bmi'];
             location.href = 'http://localhost:3000/fontend/index.html';
             check = true
         } else {
@@ -60,8 +61,8 @@ worker.onmessage = function(e) {
             document.cookie = "name=" + result['name'];
             document.cookie = "age=" + result['age'];
             document.cookie = "gender=" + result['gender'];
-            document.cookie = "height=" + result['height'];
-            document.cookie = "weight=" + result['weight'];
+            document.cookie = "level=" + result['level'];
+            document.cookie = "bmi=" + result['bmi'];
             location.href = 'http://localhost:3000/fontend/index.html';
             worker.terminate();
         } else {
@@ -187,8 +188,8 @@ function startCamera() {
     document.cookie = "name=";
     document.cookie = "age=";
     document.cookie = "gender=";
-    document.cookie = "height=";
-    document.cookie = "weight=";
+    document.cookie = "bmi=";
+    document.cookie = "level=";
     camera.start();      
     toggleButton.textContent = 'Turn Off';
     toggleButton.classList.remove('off');
@@ -236,12 +237,16 @@ function mostCommon(arr) {
     });
 
     // Get all elements with the maximum count
-    const mostCommonElements = [...counter.entries()]
+    let mostCommonElements = [...counter.entries()]
         .filter(([_, count]) => count === maxCount)
         .map(([element]) => element);
 
+    if (mostCommonElements.length > 1){
+        mostCommonElements = mostCommonElements[1];
+    }
     return mostCommonElements;
 }
+
 
 function drawLoadingCircle() {
     const videoWidth = video.videoWidth;
@@ -291,6 +296,7 @@ loginForm.addEventListener("submit", async (e) => {
     const age = input_age.value;
     const height = input_height.value;
     const weight = input_weight.value;
+    const level = input_level.value;
 
     // Send the face data, name, gender, and age to the worker
     if (face && name && gender && age) {
@@ -301,7 +307,7 @@ loginForm.addEventListener("submit", async (e) => {
         context_1.putImageData(face, 0, 0);
         const imageBase64 = canvas_1.toDataURL('image/jpeg', 1.0);
 
-        worker.postMessage({ type: 'put2DB', image64: imageBase64 , age_db: age, gender_db: gender, name_db: name, height_db: height, weight_db: weight});
+        worker.postMessage({ type: 'put2DB', image64: imageBase64 , age_db: age, gender_db: gender, name_db: name, height_db: height, weight_db: weight, level_db: level});
     } else {
         console.log('Missing data not detected.');
     }

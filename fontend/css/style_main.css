@@ -19,7 +19,7 @@ body, html {
 .form-container {
     width: 200px;
     margin-left: 0; /* Align the form on the far left */
-    padding: 15px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@ body, html {
 }
 
 /* Input field styling */
-.form-container input {
+.form-container input[type="text"] {
     width: 90%;
     padding: 10px;
     margin: 10px 0;
@@ -38,6 +38,7 @@ body, html {
 
 /* Button styling */
 .form-container button {
+    margin-top: 10px;
     padding: 10px 20px;
     border: none;
     background-color: #4CAF50;
@@ -68,6 +69,42 @@ body, html {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+
+/* Style the radio inputs and labels */
+.radio input[type="radio"] {
+    margin-right: 10px;
+    accent-color: #4CAF50; /* Change the radio button color */
+    cursor: pointer;
+}
+
+.radio label {
+    margin-right: 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.radio {
+    display: flex;
+    flex-direction: column; /* Stack radio buttons vertically */
+    gap: 7px; /* Adds space between radio buttons */
+}
+
+/* Add a hover effect */
+.radio input[type="radio"]:hover {
+    outline: 2px solid #4CAF50;
+}
+
+/* Change appearance when radio button is checked */
+.radio input[type="radio"]:checked {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.6); /* Adds glow effect */
+}
+
+/* Custom focus state for accessibility */
+.radio input[type="radio"]:focus {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
 #toggleButton {
     margin-top: 20px;
     padding: 10px 20px;
@@ -81,6 +118,7 @@ body, html {
 #toggleButton.off {
     background-color: #09ff00;
 }
+
 .disabled {
     opacity: 0.5; /* Visually indicates disabled state */
     pointer-events: none; /* Prevents interaction */

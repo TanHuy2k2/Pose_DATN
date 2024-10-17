@@ -43,10 +43,10 @@ def process_image():
     check = verify(face_embed)
 
     if check: 
-        name, gender, age, height, weight = load_face_data(face_embed)
-        return jsonify({'check': 'True','name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight})
+        name, gender, age, level, bmi = load_face_data(face_embed)
+        return jsonify({'check': 'True','name': name, 'age': age, 'gender': gender, 'level': level, "bmi": bmi})
     
-    return jsonify({'check': 'False','name': "" ,'age': "", 'gender': "", 'height': "", 'weight': ""})
+    return jsonify({'check': 'False','name': "" ,'age': "", 'gender': "", 'level': "", "bmi": ""})
 
 @app.route('/put2DB', methods=['POST'])
 def putDB():
@@ -57,6 +57,8 @@ def putDB():
     gender = data.get('gender')
     height = data.get('height')
     weight = data.get('weight')
+    level = data.get('level')
+    bmi = data.get('bmi')
 
     if not image_base64:
         return jsonify({'error': 'No image'}), 400
@@ -80,9 +82,9 @@ def putDB():
 
     face_embed = img_to_encoding(image_array)
 
-    save_face_data(face_embed, {"name": name, "gender": str(gender), "age": str(age), "height": str(height), "weight": str(weight)})
+    save_face_data(face_embed, {"name": name, "gender": str(gender), "age": str(age), "height": str(height), "weight": str(weight), "level": str(level), "bmi": bmi})
 
-    return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight})
+    return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, "bmi": bmi})
 
 
 if __name__ == '__main__':
