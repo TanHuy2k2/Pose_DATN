@@ -1,7 +1,7 @@
 let bmi;
 // Listen for messages from the main thread
 onmessage = async function(e) {
-    const { type, name_db, gender_db, age_db, height_db, weight_db, level_db, image64 } = e.data;
+    const { type, name_db, gender_db, age_db, height_db, weight_db, level_db, image64, bmi_label } = e.data;
 
     if (type === 'checkFace') {
         // Perform face check
@@ -45,5 +45,18 @@ onmessage = async function(e) {
 
         const result = await response.json();
         postMessage({ type: 'put2DBResult', result });
+    }else if (type === "get_exercise"){
+        // Save data to database
+        const response = await fetch('http://localhost:2000/get_exercise', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ gender: gender_db, age: age_db, level: level_db, bmi: bmi_label })
+        });
+
+        const result = await response.json();
+        postMessage({ type: 'getEX', result });
     }
 };

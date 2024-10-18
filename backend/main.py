@@ -6,6 +6,7 @@ import numpy as np
 import base64
 from deepface import DeepFace
 from qdrant import verify, load_face_data, save_face_data, save_face_file
+from Access_sheet import get_workout_info
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -68,6 +69,18 @@ def putDB():
     
     if not gender:
         return jsonify({'error': 'No gender'}), 400
+    
+    if not height:
+        return jsonify({'error': 'No gender'}), 400
+    
+    if not weight:
+        return jsonify({'error': 'No gender'}), 400
+    
+    if not level:
+        return jsonify({'error': 'No gender'}), 400
+    
+    if not bmi:
+        return jsonify({'error': 'No gender'}), 400
 
     image_data = image_base64.split(',')[1]
 
@@ -84,8 +97,32 @@ def putDB():
 
     save_face_data(face_embed, {"name": name, "gender": str(gender), "age": str(age), "height": str(height), "weight": str(weight), "level": str(level), "bmi": bmi})
 
-    return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, "bmi": bmi})
+    return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, 'bmi': bmi})
 
+@app.route('/get_exercise', methods=['POST'])
+def Get_EX():
+    data = request.get_json()
+    age = data.get('age')
+    gender = data.get('gender')
+    level = data.get('level')    
+    bmi = data.get('bmi')
+
+    [first, last] = age.strip().split('-')
+
+    if int(last) < 18:
+        age_lb = "15-18"
+    elif int(last) < 30:
+        age_lb = "18-30"
+    elif int(last) < 50:
+        age_lb = "30-50"
+    else: age_lb = ">50"
+
+    result = get_workout_info(gender, age_lb, bmi, level)
+
+    print(gender + age_lb + bmi + level)
+    print(result)
+
+    return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
 
 if __name__ == '__main__':
     app.run(debug=False, port = 2000)

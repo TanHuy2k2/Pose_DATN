@@ -77,8 +77,8 @@ def load_face_data(query_vector):
         age_label = search_result["age"]
         # height_label = search_result["height"]
         # weight_label = search_result["weight"]
-        level_label = search_result["height"]
-        bmi_label = search_result["weight"]
+        level_label = search_result["level"]
+        bmi_label = search_result["bmi"]
         return name_label, gender_label, age_label, level_label, bmi_label
     
 # Put to DB

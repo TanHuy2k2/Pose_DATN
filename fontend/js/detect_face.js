@@ -12,7 +12,7 @@ const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
 const input_height = document.getElementById('height');
 const input_weight = document.getElementById('weight');
-const input_level = document.querySelector('input[name="level"]:checked');
+const input_level = document.getElementsByName('level');
 
 let startAngle = 0;
 const radius = 90;
@@ -27,7 +27,7 @@ formContainer.style.display = 'none';
 let isLoading = true;
 
 // Worker
-let worker = new Worker('js/worker.js');;
+let worker = new Worker('js/worker.js');
 
 // Function to handle results from worker
 worker.onmessage = function(e) {
@@ -145,15 +145,21 @@ async function predictAndStore(tensorImage) {
         const age = mostCommon(ar_age);
         const gender = mostCommon(ar_gender);
 
-        // Display the form and populate it with predicted values
-        formContainer.style.display = 'block';
+        const [first, last] = age.trim().split("-");
+        if (parseInt(last) < 15){
+            console.log("Sorry but you are not old enough.")
+        }else{
+            // Display the form and populate it with predicted values
+            formContainer.style.display = 'block';
 
-        input_age.value = age;
-        input_gender.value = gender;
+            input_age.value = age;
+            input_gender.value = gender;
 
-        // Mark the face as processed and stop the camera
-        check = true;
+            // Mark the face as processed and stop the camera
+            check = true;
+        }
         stopCamera();
+        
     }
 }
 
@@ -242,9 +248,9 @@ function mostCommon(arr) {
         .map(([element]) => element);
 
     if (mostCommonElements.length > 1){
-        mostCommonElements = mostCommonElements[1];
+        mostCommonElements = mostCommonElements[0];
     }
-    return mostCommonElements;
+    return String(mostCommonElements);
 }
 
 
@@ -296,7 +302,12 @@ loginForm.addEventListener("submit", async (e) => {
     const age = input_age.value;
     const height = input_height.value;
     const weight = input_weight.value;
-    const level = input_level.value;
+    let level;
+    for (i = 0; i < input_level.length; i++) {
+        if (input_level[i].checked){
+            level = input_level[i].value;
+        }
+    }
 
     // Send the face data, name, gender, and age to the worker
     if (face && name && gender && age) {

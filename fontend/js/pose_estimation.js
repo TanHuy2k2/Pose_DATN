@@ -8,6 +8,19 @@ const input_gender = document.getElementById('gender');
 const input_bmi = document.getElementById('bmi');
 const input_level = document.getElementById('level');
 
+// Worker
+let worker = new Worker('js/worker.js');
+
+// Function to handle results from worker
+worker.onmessage = function(e) {
+    const { type, result } = e.data;
+
+    if (type === 'getEX') {
+        if (result['check'] === 'True') {
+            console.log(result);
+        }
+    }
+}
 function getCookies() {
     const cookies = document.cookie.split(';');
     const cookieObj = {};
@@ -21,6 +34,9 @@ function getCookies() {
     input_gender.value = cookieObj['gender'];
     input_bmi.value = cookieObj['bmi'];
     input_level.value = cookieObj['level'];
+
+    worker.postMessage({ type: 'get_exercise',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
+
 }
 
 function calculate_angle(a, b, c){

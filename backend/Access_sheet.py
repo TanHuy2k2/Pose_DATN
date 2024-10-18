@@ -3,7 +3,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # Cấu hình xác thực
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("./backend/weights/googleAPI.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("../backend/weights/googleAPI.json", scope)
 client = gspread.authorize(creds)
 
 # Mở Google Sheet
@@ -29,7 +29,7 @@ def get_workout_info(gender, age, bmi, fitness_level):
             }
     return "No data available for the given inputs."
 
-# result = get_workout_info(gender, age, bmi, fitness_level)
+# result = get_workout_info("Male", "18-30", "Normal", "Normal")
 
 # if isinstance(result, dict):
 #     print(f"Rest: {result['rest']} seconds, Sets: {result['sets']}, Reps: {result['reps']}")
