@@ -119,9 +119,6 @@ def Get_EX():
 
     result = get_workout_info(gender, age_lb, bmi, level)
 
-    print(gender + age_lb + bmi + level)
-    print(result)
-
     return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
 
 if __name__ == '__main__':
