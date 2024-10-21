@@ -9,14 +9,6 @@ const input_bmi = document.getElementById('bmi');
 const input_level = document.getElementById('level');
 
 
-const bt_form = document.getElementById('bt_form');
-const formContainer = document.getElementById("form-container");
-
-bt_form.addEventListener("click", async (e) => {
-    e.preventDefault();
-    formContainer.classList.toggle("active");
-});
-
 // Worker
 let worker = new Worker('js/worker.js');
 
@@ -122,7 +114,7 @@ const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
 }});
 pose.setOptions({
-  modelComplexity: 0,
+  modelComplexity: 2,
   static_image_mode: false, 
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,

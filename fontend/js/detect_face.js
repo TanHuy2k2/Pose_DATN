@@ -75,7 +75,7 @@ async function onResults(results) {
     // Set the canvas size to match the video dimensions
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-    const pixelRatio = window.devicePixelRatio || 1;
+    const pixelRatio = 1;
 
     // Set the canvas resolution (high-DPI support)
     canvasElement.width = videoWidth * pixelRatio;
@@ -257,7 +257,7 @@ function mostCommon(arr) {
 function drawLoadingCircle() {
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-    const pixelRatio = window.devicePixelRatio || 1;
+    const pixelRatio = 1;
 
     // Set the canvas resolution (high-DPI support)
     canvasElement.width = videoWidth * pixelRatio;
