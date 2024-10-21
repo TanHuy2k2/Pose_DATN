@@ -8,6 +8,20 @@ const input_gender = document.getElementById('gender');
 const input_bmi = document.getElementById('bmi');
 const input_level = document.getElementById('level');
 
+function myFunction() {
+    var form = document.getElementById("formContainer");
+    var icon = document.getElementById("toggleIcon");
+
+    if (form.style.display === "none" || form.style.display === "") {
+      form.style.display = "block";
+      icon.classList.remove("fa-bars");
+      icon.classList.add("fa-remove");
+    } else {
+      form.style.display = "none";
+      icon.classList.remove("fa-remove");
+      icon.classList.add("fa-bars");
+    }
+}
 
 // Worker
 let worker = new Worker('js/worker.js');
