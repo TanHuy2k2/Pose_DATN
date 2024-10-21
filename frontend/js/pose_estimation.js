@@ -34,7 +34,10 @@ function calculate_angle(a, b, c){
 
     return angle;
 }
-    
+
+let stage = "down"; // Initial stage
+let counter = 0; // Initialize counter
+
 function onResults(results) {
 
     if (!results.poseLandmarks) {
@@ -85,10 +88,22 @@ function onResults(results) {
         const angle = calculate_angle(shoulder, elbow, wrist);
         console.log(angle);
 
+        if (angle > 140) {
+            stage = "down";
+        }
+        
+        if (angle < 40 && stage === "down") {
+            stage = "up";
+            counter += 1;
+            console.log(counter);
+        }
+
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
-        canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));    
-        canvasCtx.fillText("counter", 10, 20);    
+        canvasCtx.fillText(Math.round(angle), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));
+        canvasCtx.fillText(`Counter: ${counter}`, 10, 20);
+        
+        
     }
 
     canvasCtx.restore();
@@ -98,7 +113,7 @@ const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
 }});
 pose.setOptions({
-  modelComplexity: 1,
+  modelComplexity: 2,
   static_image_mode: false, 
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,
