@@ -8,6 +8,15 @@ const input_gender = document.getElementById('gender');
 const input_bmi = document.getElementById('bmi');
 const input_level = document.getElementById('level');
 
+
+const bt_form = document.getElementById('bt_form');
+const formContainer = document.getElementById("form-container");
+
+bt_form.addEventListener("click", async (e) => {
+    e.preventDefault();
+    formContainer.classList.toggle("active");
+});
+
 // Worker
 let worker = new Worker('js/worker.js');
 

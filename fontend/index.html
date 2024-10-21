@@ -6,49 +6,72 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose" crossorigin="anonymous"></script>
-
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>Website</title>
   <link rel="stylesheet" href="/fontend/css/style_index.css">
 </head>
 
 <body>
+  <!-- Navigation bar with toggle button -->
+  <div class="topnav">
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars" id="toggleIcon"></i>
+    </a>
+  </div>
+
   <div class="main-container">
-    <div class="form-container">
-        <form action="" id="form">
-            <div class="row-name">
-              <input type="text" id="name" disabled>
-            </div>
-            <div class="form-row">
-              <label>Age: </label>
-              <input type="text" id="age" disabled>
-            </div>
-            <div class="form-row">
-              <label>Gender:</label>
-              <input type="text" id="gender" disabled>
-            </div>
-            <div class="form-row">
-              <label>BMI: </label>
-              <input type="text" id="bmi" disabled>
-            </div>
-            <div class="form-row">
-              <label>Level: </label>
-              <input type="text" id="level" disabled>
-            </div>
-        </form>
+    <div class="form-container" id="formContainer">
+      <form action="" id="form">
+        <div class="row-name">
+          <input type="text" id="name" disabled>
+        </div>
+        <div class="form-row">
+          <label>Age: </label>
+          <input type="text" id="age" disabled>
+        </div>
+        <div class="form-row">
+          <label>Gender:</label>
+          <input type="text" id="gender" disabled>
+        </div>
+        <div class="form-row">
+          <label>BMI: </label>
+          <input type="text" id="bmi" disabled>
+        </div>
+        <div class="form-row">
+          <label>Level: </label>
+          <input type="text" id="level" disabled>
+        </div>
+      </form>
     </div>
 
     <div id="container">
-        <video id="camera" class="input_video" playsinline></video>
-        <div id="mini-container">
-          <canvas class="output_canvas"></canvas>
-          <video autoplay loop id="video_check">
-            <source src="video/BicepsCurl.mp4" type="video/mp4">
-          </video>
-        </div>
+      <video id="camera" class="input_video" playsinline></video>
+      <div id="mini-container">
+        <canvas class="output_canvas"></canvas>
+        <video autoplay loop id="video_check">
+          <source src="video/BicepsCurl.mp4" type="video/mp4">
+        </video>
+      </div>
     </div>
-    
-</div>
+  </div>
 
-</body>
   <script src="/fontend/js/pose_estimation.js"></script>
+  <script>
+    function myFunction() {
+      var form = document.getElementById("formContainer");
+      var icon = document.getElementById("toggleIcon");
+
+      if (form.style.display === "none" || form.style.display === "") {
+        form.style.display = "block";
+        icon.classList.remove("fa-bars");
+        icon.classList.add("fa-remove");
+      } else {
+        form.style.display = "none";
+        icon.classList.remove("fa-remove");
+        icon.classList.add("fa-bars");
+      }
+    }
+  </script>
+</body>
 </html>
