@@ -12,7 +12,7 @@ const input_sets = document.getElementById('sets');
 const input_reps = document.getElementById('reps');
 const input_rest = document.getElementById('rest');
 
-let sets, reps, rest;
+let sets, reps, count_reps, rest, camera, check = false;
 
 function myFunction() {
     var form = document.getElementById("formContainer");
@@ -42,12 +42,18 @@ worker.onmessage = function(e) {
             sets = result['sets'];
             reps = result['reps'];
             rest = result['rest'];
-            input_sets.textContent = sets;
-            input_reps.textContent = reps;
-            input_rest.textContent = rest;
+            count_reps = reps;
+            set_exercise(sets, reps, rest);
         }
     }
 }
+
+function set_exercise(set, rep, rest){
+    input_sets.textContent = set;
+    input_reps.textContent = rep;
+    input_rest.textContent = rest;
+}
+
 function getCookies() {
     const cookies = document.cookie.split(';');
     const cookieObj = {};
@@ -124,12 +130,31 @@ function onResults(results) {
         // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
         const angle = calculate_angle(shoulder, elbow, wrist);
 
-        console.log("angle tan: ", angle)
+        if (angle < 160 && angle > 150 && !check){
+            check = true;
+        }
+        if (angle > 30 && angle < 40 && check){
+            console.log("angle: ", angle)
+            check = false;
+            count_reps -= 1;
+        }
+
+        if (count_reps == 0){
+            sets -= 1
+            count_reps = reps;
+        }
+        if (sets == 0){
+            if (camera) { 
+                camera.stop();
+            }
+            camera = null; 
+        }
+        
+        set_exercise(sets, count_reps, rest);
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
-        canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));    
-        canvasCtx.fillText("counter", 10, 20);    
+        canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
     }
 
     canvasCtx.restore();
@@ -149,7 +174,7 @@ pose.setOptions({
 
 pose.onResults(onResults);
     
-const camera = new Camera(videoElement, {
+camera = new Camera(videoElement, {
     onFrame: async () => {
         await pose.send({image: videoElement});
     },

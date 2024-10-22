@@ -107,7 +107,8 @@ def Get_EX():
     level = data.get('level')    
     bmi = data.get('bmi')
 
-    [first, last] = age.strip().split('-')
+    if age:
+        [first, last] = age.strip().split('-')
 
     if int(last) < 18:
         age_lb = "15-18"
