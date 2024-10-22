@@ -8,14 +8,26 @@ const input_gender = document.getElementById('gender');
 const input_bmi = document.getElementById('bmi');
 const input_level = document.getElementById('level');
 
+const input_sets = document.getElementById('sets');
+const input_reps = document.getElementById('reps');
+const input_rest = document.getElementById('rest');
 
-const bt_form = document.getElementById('bt_form');
-const formContainer = document.getElementById("form-container");
+let sets, reps, rest;
 
-bt_form.addEventListener("click", async (e) => {
-    e.preventDefault();
-    formContainer.classList.toggle("active");
-});
+function myFunction() {
+    var form = document.getElementById("formContainer");
+    var icon = document.getElementById("toggleIcon");
+
+    if (form.style.display === "none" || form.style.display === "") {
+      form.style.display = "block";
+      icon.classList.remove("fa-bars");
+      icon.classList.add("fa-remove");
+    } else {
+      form.style.display = "none";
+      icon.classList.remove("fa-remove");
+      icon.classList.add("fa-bars");
+    }
+}
 
 // Worker
 let worker = new Worker('js/worker.js');
@@ -27,6 +39,12 @@ worker.onmessage = function(e) {
     if (type === 'getEX') {
         if (result['check'] === 'True') {
             console.log(result);
+            sets = result['sets'];
+            reps = result['reps'];
+            rest = result['rest'];
+            input_sets.textContent = sets;
+            input_reps.textContent = reps;
+            input_rest.textContent = rest;
         }
     }
 }
@@ -92,22 +110,21 @@ function onResults(results) {
 
         const right_hip = [landmarks[24].x, landmarks[24].y];
         const left_hip = [landmarks[23].x, landmarks[23].y];
-
-        const leftShoulderDistance = Math.abs(left_shoulder[0] - left_hip[0]);
-        const rightShoulderDistance = Math.abs(right_shoulder[0] - right_hip[0]);
                         
-        if (leftShoulderDistance < rightShoulderDistance){
+        if ((landmarks[11].visibility > landmarks[12].visibility) && (landmarks[11].visibility > 0.8)){
             shoulder = left_shoulder;
             elbow = left_elbow;
             wrist = left_wrist;
-        }else{
+        }else if ((landmarks[12].visibility > landmarks[11].visibility) && (landmarks[12].visibility > 0.8)){
             shoulder = right_shoulder;
             elbow = right_elbow;
             wrist = right_wrist;
         }        
 
-        // Calculate angle
+        // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
         const angle = calculate_angle(shoulder, elbow, wrist);
+
+        console.log("angle tan: ", angle)
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
@@ -122,7 +139,7 @@ const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
 }});
 pose.setOptions({
-  modelComplexity: 0,
+  modelComplexity: 2,
   static_image_mode: false, 
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,

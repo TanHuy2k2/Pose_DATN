@@ -13,11 +13,17 @@
 </head>
 
 <body>
-  <!-- Navigation bar with toggle button -->
+  
   <div class="topnav">
     <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-      <i class="fa fa-bars" id="toggleIcon"></i>
+      <i class="fa fa-remove" id="toggleIcon"></i>
     </a>
+  </div>
+
+  <div class="exercise-box">
+    <span>Sets: <span id="sets"></span></span>
+    <span>Reps: <span id="reps"></span></span>
+    <span>Rest Time: <span id="rest"></span>s</span>
   </div>
 
   <div class="main-container">
@@ -57,21 +63,5 @@
   </div>
 
   <script src="/fontend/js/pose_estimation.js"></script>
-  <script>
-    function myFunction() {
-      var form = document.getElementById("formContainer");
-      var icon = document.getElementById("toggleIcon");
-
-      if (form.style.display === "none" || form.style.display === "") {
-        form.style.display = "block";
-        icon.classList.remove("fa-bars");
-        icon.classList.add("fa-remove");
-      } else {
-        form.style.display = "none";
-        icon.classList.remove("fa-remove");
-        icon.classList.add("fa-bars");
-      }
-    }
-  </script>
 </body>
 </html>
