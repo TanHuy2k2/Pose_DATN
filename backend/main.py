@@ -114,7 +114,7 @@ def Get_EX():
         age_lb = "15-18"
     elif int(last) < 30:
         age_lb = "18-30"
-    elif int(last) < 50:
+    elif int(last) <= 50:
         age_lb = "30-50"
     else: age_lb = ">50"
 

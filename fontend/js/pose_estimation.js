@@ -12,7 +12,7 @@ const input_sets = document.getElementById('sets');
 const input_reps = document.getElementById('reps');
 const input_rest = document.getElementById('rest');
 
-let sets, reps, count_reps, rest, camera, check = false;
+let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false;
 
 function myFunction() {
     var form = document.getElementById("formContainer");
@@ -43,6 +43,7 @@ worker.onmessage = function(e) {
             reps = result['reps'];
             rest = result['rest'];
             count_reps = reps;
+            count_rest = rest;
             set_exercise(sets, reps, rest);
         }
     }
@@ -80,8 +81,21 @@ function calculate_angle(a, b, c){
     if (angle > 180.0) {
         angle = 360 - angle;
     }
-
+    
     return angle;
+}
+
+function countdown(restTime) {
+    set_exercise(sets, count_reps, count_rest);
+    if (restTime > 0) {
+        count_rest = restTime;
+        setTimeout(() => {
+            countdown(restTime - 1);
+        }, 1000); // Decrease restTime every second
+    } else {
+        count_rest = rest;
+        check_sets = false; // Reset check_sets for the next set
+    }
 }
     
 function onResults(results) {
@@ -130,27 +144,32 @@ function onResults(results) {
         // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
         const angle = calculate_angle(shoulder, elbow, wrist);
 
-        if (angle < 160 && angle > 150 && !check){
-            check = true;
+        if (angle < 160 && angle > 150 && !check_reps && !check_sets){
+            check_reps = true;
         }
-        if (angle > 30 && angle < 40 && check){
+
+        if (angle > 30 && angle < 40 && check_reps){
             console.log("angle: ", angle)
-            check = false;
+            check_reps = false;
             count_reps -= 1;
         }
 
         if (count_reps == 0){
             sets -= 1
             count_reps = reps;
+            check_sets = true;
         }
+
         if (sets == 0){
-            if (camera) { 
-                camera.stop();
-            }
-            camera = null; 
+            check_sets = false;
+            location.href = 'http://localhost:3000/fontend/main.html';
+        }
+
+        if (check_sets){
+            countdown(count_rest);
         }
         
-        set_exercise(sets, count_reps, rest);
+        set_exercise(sets, count_reps, count_rest);
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm ngược từ 90</title>
+</head>
+<body>
+
+<div id="countDisplay">90</div>
+
+<script>
+    function countDown(num) {
+        document.getElementById('countDisplay').textContent = num; // Hiển thị giá trị hiện tại
+        if (num > 0) {
+            setTimeout(() => countDown(num - 1), 1000); // Gọi lại hàm sau 1 giây
+        } else {
+            document.getElementById('countDisplay').textContent = "Đã xong!";
+        }
+    }
+
+    // Bắt đầu đếm từ 90
+    countDown(10);
+</script>
+
+</body>
+</html>
