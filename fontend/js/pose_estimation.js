@@ -2,6 +2,9 @@ const videoElement = document.getElementById('camera');
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
 
+const form = document.getElementById("formContainer");
+const icon = document.getElementById("toggleIcon");
+
 const input_name = document.getElementById('name');
 const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
@@ -13,10 +16,9 @@ const input_reps = document.getElementById('reps');
 const input_rest = document.getElementById('rest');
 
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false;
+let  exercise = ["dumbbell_curl", "complete"], next_ex = 0, hasSpoken = false;
 
-function myFunction() {
-    var form = document.getElementById("formContainer");
-    var icon = document.getElementById("toggleIcon");
+function click_form() {
 
     if (form.style.display === "none" || form.style.display === "") {
       form.style.display = "block";
@@ -26,6 +28,24 @@ function myFunction() {
       form.style.display = "none";
       icon.classList.remove("fa-remove");
       icon.classList.add("fa-bars");
+    }
+}
+function speakText(text) {
+    // Check if the browser supports speech synthesis
+    if ('speechSynthesis' in window) {
+      const speech = new SpeechSynthesisUtterance(text);
+      
+      // Optional: Set voice, pitch, rate, etc.
+      speech.lang = 'en-US';
+      speech.pitch = 1;  // Range between 0 and 2
+      speech.rate = 0.8;   // Range between 0.1 and 10
+      speech.volume = 1; // Range between 0 and 1
+      speech.voice = "Microsoft Mark - English (United States) (en-US)"
+
+      // Speak the text
+      window.speechSynthesis.speak(speech);
+    } else {
+      alert("Sorry, your browser doesn't support text-to-speech!");
     }
 }
 
@@ -70,7 +90,8 @@ function getCookies() {
     input_level.value = cookieObj['level'];
 
     worker.postMessage({ type: 'get_exercise',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
-
+    
+    speakText("Okay let's start!!!");
 }
 
 function calculate_angle(a, b, c){
@@ -87,14 +108,19 @@ function calculate_angle(a, b, c){
 
 function countdown(restTime) {
     set_exercise(sets, count_reps, count_rest);
-    if (restTime > 0) {
+    if (restTime > 0 ) {
         count_rest = restTime;
         setTimeout(() => {
             countdown(restTime - 1);
         }, 1000); // Decrease restTime every second
     } else {
+        if (!hasSpoken){
+            speakText("Do it again!!!");
+            hasSpoken = true;
+        }
         count_rest = rest;
         check_sets = false; // Reset check_sets for the next set
+
     }
 }
     
@@ -128,19 +154,31 @@ function onResults(results) {
         const right_wrist = [landmarks[16].x, landmarks[16].y];
         const left_wrist = [landmarks[15].x, landmarks[15].y];
 
-        const right_hip = [landmarks[24].x, landmarks[24].y];
-        const left_hip = [landmarks[23].x, landmarks[23].y];
-                        
-        if ((landmarks[11].visibility > landmarks[12].visibility) && (landmarks[11].visibility > 0.8)){
-            shoulder = left_shoulder;
-            elbow = left_elbow;
-            wrist = left_wrist;
-        }else if ((landmarks[12].visibility > landmarks[11].visibility) && (landmarks[12].visibility > 0.8)){
-            shoulder = right_shoulder;
-            elbow = right_elbow;
-            wrist = right_wrist;
-        }        
+        if (exercise[next_ex] == "dumbbell_curl"){
+            dumbbell_curl(landmarks[11], landmarks[12], left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist);
+        }else if (exercise[next_ex] == "complete"){
+            speakText("You're done!!!");
+            location.href = 'http://localhost:3000/fontend/main.html';
+        }
+        
+    }
 
+    canvasCtx.restore();
+}
+
+function dumbbell_curl(lm_11, lm_12, left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist){
+
+    if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8)){
+        shoulder = left_shoulder;
+        elbow = left_elbow;
+        wrist = left_wrist;
+    }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8)){
+        shoulder = right_shoulder;
+        elbow = right_elbow;
+        wrist = right_wrist;
+    }        
+
+    if (Math.abs(shoulder[0] - elbow[0]) <= 0.07){
         // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
         const angle = calculate_angle(shoulder, elbow, wrist);
 
@@ -155,33 +193,35 @@ function onResults(results) {
         }
 
         if (count_reps == 0){
+            speakText("Rest time!!!");
             sets -= 1
+            hasSpoken = false;
             count_reps = reps;
             check_sets = true;
         }
 
         if (sets == 0){
             check_sets = false;
-            location.href = 'http://localhost:3000/fontend/main.html';
+            next_ex += 1;
         }
 
         if (check_sets){
             countdown(count_rest);
         }
-        
+
         set_exercise(sets, count_reps, count_rest);
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
         canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
+        
     }
-
-    canvasCtx.restore();
-}
+} 
     
 const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
 }});
+
 pose.setOptions({
   modelComplexity: 2,
   static_image_mode: false, 
