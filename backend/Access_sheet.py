@@ -23,6 +23,7 @@ def get_workout_info(gender, age, bmi, fitness_level):
             row["Fitness Level"] == fitness_level):
             # Trả về các giá trị Rest, Sets, Reps
             return {
+                "db_weights": row["Weight(kg)"],
                 "rest": row["Rest (sec)"],
                 "sets": row["Sets"],
                 "reps": row["Reps"]

@@ -11,6 +11,7 @@ const input_gender = document.getElementById('gender');
 const input_bmi = document.getElementById('bmi');
 const input_level = document.getElementById('level');
 
+const input_db = document.getElementById('db_weights');
 const input_sets = document.getElementById('sets');
 const input_reps = document.getElementById('reps');
 const input_rest = document.getElementById('rest');
@@ -37,10 +38,9 @@ function speakText(text) {
       
       // Optional: Set voice, pitch, rate, etc.
       speech.lang = 'en-US';
-      speech.pitch = 1;  // Range between 0 and 2
+      speech.pitch = 1.5;  // Range between 0 and 2
       speech.rate = 0.8;   // Range between 0.1 and 10
       speech.volume = 1; // Range between 0 and 1
-      speech.voice = "Microsoft Mark - English (United States) (en-US)"
 
       // Speak the text
       window.speechSynthesis.speak(speech);
@@ -59,17 +59,19 @@ worker.onmessage = function(e) {
     if (type === 'getEX') {
         if (result['check'] === 'True') {
             console.log(result);
+            db_weights = result['db_weights'];
             sets = result['sets'];
             reps = result['reps'];
             rest = result['rest'];
             count_reps = reps;
             count_rest = rest;
-            set_exercise(sets, reps, rest);
+            set_exercise(db_weights, sets, reps, rest);
         }
     }
 }
 
-function set_exercise(set, rep, rest){
+function set_exercise(db_weights, set, rep, rest){
+    input_db.textContent = db_weights
     input_sets.textContent = set;
     input_reps.textContent = rep;
     input_rest.textContent = rest;

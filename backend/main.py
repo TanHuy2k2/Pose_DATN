@@ -120,7 +120,7 @@ def Get_EX():
 
     result = get_workout_info(gender, age_lb, bmi, level)
 
-    return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
+    return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
 
 if __name__ == '__main__':
     app.run(debug=False, port = 2000)
