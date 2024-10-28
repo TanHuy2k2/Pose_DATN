@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text to Speech Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    #text {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Text to Speech</h1>
+
+  <textarea id="text" placeholder="Type your text here"></textarea><br>
+  <button id="speakButton">Speak Text</button>
+
+  <script>
+    // Text-to-Speech functionality using Web Speech API
+    const speakButton = document.getElementById('speakButton');
+
+    speakButton.addEventListener('click', () => {
+      const text = document.getElementById('text').value;
+
+      if (text.trim() === '') {
+        alert('Please enter some text.');
+        return;
+      }
+
+      // Create a new SpeechSynthesisUtterance object
+      const speech = new SpeechSynthesisUtterance();
+      speech.text = text;
+      speech.lang = 'en-US';  // You can change the language code
+
+      // Speak the text
+      window.speechSynthesis.speak(speech);
+    });
+  </script>
+
+</body>
+</html>

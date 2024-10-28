@@ -107,19 +107,20 @@ def Get_EX():
     level = data.get('level')    
     bmi = data.get('bmi')
 
-    [first, last] = age.strip().split('-')
+    if age:
+        [first, last] = age.strip().split('-')
 
     if int(last) < 18:
         age_lb = "15-18"
     elif int(last) < 30:
         age_lb = "18-30"
-    elif int(last) < 50:
+    elif int(last) <= 50:
         age_lb = "30-50"
     else: age_lb = ">50"
 
     result = get_workout_info(gender, age_lb, bmi, level)
 
-    return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
+    return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
 
 if __name__ == '__main__':
     app.run(debug=False, port = 2000)

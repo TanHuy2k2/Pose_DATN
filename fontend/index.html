@@ -13,11 +13,18 @@
 </head>
 
 <body>
-  <!-- Navigation bar with toggle button -->
+  
   <div class="topnav">
-    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <a href="javascript:void(0);" class="icon" onclick="click_form()">
       <i class="fa fa-remove" id="toggleIcon"></i>
     </a>
+  </div>
+
+  <div class="exercise-box">
+    <span>Dumbbell weight: <span id="db_weights"></span>(kg)</span>
+    <span>Sets: <span id="sets"></span></span>
+    <span>Reps: <span id="reps"></span></span>
+    <span>Rest Time: <span id="rest"></span>s</span>
   </div>
 
   <div class="main-container">
@@ -50,7 +57,7 @@
       <div id="mini-container">
         <canvas class="output_canvas"></canvas>
         <video autoplay loop id="video_check">
-          <source src="video/BicepsCurl.mp4" type="video/mp4">
+          <source src="video/dumbbell-boy.gif" type="video/mp4">
         </video>
       </div>
     </div>
