@@ -29,9 +29,9 @@ def get_workout_info(gender, age, bmi, fitness_level):
             }
     return "No data available for the given inputs."
 
-# result = get_workout_info("Male", "18-30", "Normal", "Normal")
+result = get_workout_info("Male", "18-30", "Normal", "Normal")
 
-# if isinstance(result, dict):
-#     print(f"Rest: {result['rest']} seconds, Sets: {result['sets']}, Reps: {result['reps']}")
-# else:
-#     print(result)
+if isinstance(result, dict):
+    print(f"Rest: {result['rest']} seconds, Sets: {result['sets']}, Reps: {result['reps']}")
+else:
+    print(result)
