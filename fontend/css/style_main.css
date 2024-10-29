@@ -6,14 +6,26 @@ body, html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #f0f0f0;
+
 }
+html {
+    background: linear-gradient(to right, rgba(21, 0, 255, 0.5), rgba(128, 128, 128, 0.5)), 
+                url('/fontend/images/c.jpg') no-repeat center center fixed;
+    background-size: cover; /* Optional: to ensure the image covers the entire background */
+}
+
+
 .main-container {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    justify-content: flex-end; /* Aligns content to the right */
+    align-items: flex-start; /* Aligns content to the top */
     gap: 10px; /* Space between the form and video/canvas */
+    background-color: rgba(255, 255, 255, 0.9); /* Optional: add a white background for better readability */
+    border-radius: 10px; /* Optional: rounded corners */
+    padding: 20px; /* Optional: padding around the container */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Optional: shadow for depth */
 }
+
 
 /* Form styling */
 .form-container {
@@ -25,6 +37,8 @@ body, html {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: absolute;
     left: 0; /* Keep the form on the left edge of the page */
+    background-color: hsla(223, 80%, 90%, 0.76); /* Opaque white */
+
 }
 
 /* Input field styling */
@@ -61,6 +75,7 @@ body, html {
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background-color: #ffffff;
 }
 .output_canvas{
     width: 640px;
@@ -68,6 +83,7 @@ body, html {
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background-color: #ffffff;
 }
 
 /* Style the radio inputs and labels */
@@ -111,15 +127,44 @@ body, html {
     font-size: 16px;
     background-color: #ff0000;
     color: #fff;
+    font-weight: bold;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 #toggleButton.off {
-    background-color: #09ff00;
+    background: rgba(152, 251, 152, 0.85); /* Mint Green */
+    color: #004d00; /* Dark Green for text */
+    font-weight: bold;
 }
 
 .disabled {
     opacity: 0.5; /* Visually indicates disabled state */
     pointer-events: none; /* Prevents interaction */
   }
+
+/* Title Card Styling */
+.title-card {
+    background: rgba(152, 251, 152, 0.85); /* Mint Green */
+    color: #004d00; /* Dark Green for text */
+    text-align: center;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 20px auto;
+    max-width: 800px; /* Limits width for better readability */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
+}
+
+.title-card h1 {
+    margin: 0;
+    font-size: 2.5em;
+    font-family: 'Arial', sans-serif;
+}
+
+.title-card p {
+    margin: 10px 0 0;
+    font-size: 1.3em;
+    line-height: 1.5;
+}
+
+

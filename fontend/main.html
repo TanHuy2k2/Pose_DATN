@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website</title>
+
+    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
@@ -10,27 +13,30 @@
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 
-    <script src="/fontend/js/Predict_AgeGender.js"></script>
-    <title>Website</title>
+    <!-- Custom Scripts and Styles -->
     <link rel="stylesheet" href="/fontend/css/style_main.css">
+    <script src="/fontend/js/Predict_AgeGender.js"></script>
 </head>
 <body>
+    <div class="title-card">
+        <h1>Welcome to Our Gym Tracker App</h1>
+    </div>
     <div class="main-container">
         <div class="form-container">
             <form action="" id="form">
-                <label>Name: </label>
+                <label for="name">Name: </label>
                 <input type="text" id="name" placeholder="Your name">
 
-                <label>Age: </label>
-                <input type="text" id="age" disabled>
+                <label for="age">Age: </label>
+                <input type="text" id="age" placeholder="Predicted age" disabled>
 
-                <label>Gender:</label>
-                <input type="text" id="gender" disabled>
+                <label for="gender">Gender:</label>
+                <input type="text" id="gender" placeholder="Predicted gender" disabled>
 
-                <label>Height: (cm)</label>
+                <label for="height">Height: (cm)</label>
                 <input type="text" id="height" placeholder="Your height (cm)">
 
-                <label>Weight: (kg)</label>
+                <label for="weight">Weight: (kg)</label>
                 <input type="text" id="weight" placeholder="Your weight (kg)">
 
                 <label>Please select your level:</label>
@@ -49,7 +55,6 @@
                     </label>
                 </div>
 
-
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -60,8 +65,9 @@
         </div>
     </div>
 
-    <button id="toggleButton" class="off">Turn On</button>
-</body>
-<script src="/fontend/js/detect_face.js"></script>
+    <button id="toggleButton" class="off">Turn On Camera</button>
 
+    <!-- Additional JavaScript -->
+    <script src="/fontend/js/detect_face.js"></script>
+</body>
 </html>

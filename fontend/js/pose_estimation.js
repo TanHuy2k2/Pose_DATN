@@ -109,7 +109,7 @@ function calculate_angle(a, b, c){
 }
 
 function countdown(restTime) {
-    set_exercise(sets, count_reps, count_rest);
+    set_exercise( db_weights, sets, count_reps, count_rest);
     if (restTime > 0 ) {
         count_rest = restTime;
         setTimeout(() => {
@@ -211,7 +211,7 @@ function dumbbell_curl(lm_11, lm_12, left_shoulder, left_elbow, left_wrist, righ
             countdown(count_rest);
         }
 
-        set_exercise(sets, count_reps, count_rest);
+        set_exercise(db_weights, sets, count_reps, count_rest);
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';

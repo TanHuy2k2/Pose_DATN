@@ -197,7 +197,7 @@ function startCamera() {
     document.cookie = "bmi=";
     document.cookie = "level=";
     camera.start();      
-    toggleButton.textContent = 'Turn Off';
+    toggleButton.textContent = 'Turn Off Camera';
     toggleButton.classList.remove('off');
 }
 
