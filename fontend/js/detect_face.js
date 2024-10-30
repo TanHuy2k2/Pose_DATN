@@ -157,6 +157,7 @@ async function predictAndStore(tensorImage) {
 
             video.style.display = 'none';
             toggleButton.style.display = 'none';
+            formContainer.style.marginBottom = "50px"; 
 
 
             // Mark the face as processed and stop the camera
@@ -216,7 +217,7 @@ function stopCamera() {
     if (faceDetection){
         faceDetection.close();
     }
-    toggleButton.textContent = 'Turn On';
+    toggleButton.textContent = 'Turn On Camera';
     toggleButton.classList.add('off');
     drawLoadingCircle();
 }
