@@ -155,6 +155,10 @@ async function predictAndStore(tensorImage) {
             input_age.value = age;
             input_gender.value = gender;
 
+            video.style.display = 'none';
+            toggleButton.style.display = 'none';
+
+
             // Mark the face as processed and stop the camera
             check = true;
         }
@@ -191,6 +195,7 @@ function startCamera() {
             await faceDetection.send({image: video});
         }
     });
+    formContainer.style.display = 'none';
     document.cookie = "name=";
     document.cookie = "age=";
     document.cookie = "gender=";

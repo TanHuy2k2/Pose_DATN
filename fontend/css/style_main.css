@@ -6,8 +6,8 @@ body, html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
 }
+
 html {
     background: linear-gradient(to right, rgba(21, 0, 255, 0.5), rgba(128, 128, 128, 0.5)), 
                 url('/fontend/images/c.jpg') no-repeat center center fixed;
@@ -20,16 +20,13 @@ html {
     justify-content: flex-end; /* Aligns content to the right */
     align-items: flex-start; /* Aligns content to the top */
     gap: 10px; /* Space between the form and video/canvas */
-    background-color: rgba(255, 255, 255, 0.9); /* Optional: add a white background for better readability */
-    border-radius: 10px; /* Optional: rounded corners */
-    padding: 20px; /* Optional: padding around the container */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Optional: shadow for depth */
 }
 
 
 /* Form styling */
 .form-container {
-    width: 200px;
+    width: 100%;
+    max-width: 250px;
     margin-left: 0; /* Align the form on the far left */
     padding: 10px;
     border: 1px solid #ccc;
@@ -37,7 +34,7 @@ html {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: absolute;
     left: 0; /* Keep the form on the left edge of the page */
-    background-color: hsla(223, 80%, 90%, 0.76); /* Opaque white */
+    background-color: #e6e6fa; 
 
 }
 
@@ -55,8 +52,9 @@ html {
     margin-top: 10px;
     padding: 10px 20px;
     border: none;
-    background-color: #4CAF50;
-    color: white;
+    background-color: rgba(152, 251, 152, 0.85);
+    color: #004d00;
+    font-weight: bold;
     border-radius: 4px;
     cursor: pointer;
 }
@@ -67,7 +65,6 @@ html {
 
 #container {
     display: flex;
-    /* align-items: center; */
 }
 #camera {
     width: 100px; /* Adjust the width as needed */
@@ -83,7 +80,7 @@ html {
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    background-color: #ffffff;
+    background-color: white;
 }
 
 /* Style the radio inputs and labels */
@@ -143,28 +140,163 @@ html {
     pointer-events: none; /* Prevents interaction */
   }
 
-/* Title Card Styling */
+/* Title card styling */
 .title-card {
     background: rgba(152, 251, 152, 0.85); /* Mint Green */
-    color: #004d00; /* Dark Green for text */
+    color: #004d00; /* White text for readability */
     text-align: center;
-    padding: 25px;
+    padding: 15px; /* Reduced padding to decrease height */
     border-radius: 12px;
     margin: 20px auto;
-    max-width: 800px; /* Limits width for better readability */
+    max-width: 90%; /* Responsive max width */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
 }
 
+/* Title card heading */
 .title-card h1 {
     margin: 0;
-    font-size: 2.5em;
+    font-size: 2em; /* Slightly smaller font size */
     font-family: 'Arial', sans-serif;
 }
 
+/* Title card paragraph */
 .title-card p {
-    margin: 10px 0 0;
-    font-size: 1.3em;
-    line-height: 1.5;
+    margin: 5px 0 0; /* Reduced margin for tighter spacing */
+    font-size: 1.1em; /* Slightly smaller font size */
+    line-height: 1.4; /* Adjusted line height */
 }
 
+/* Media queries for responsive design */
+@media (max-width: 1300px) {
+    .main-container {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Center elements */
+    }
+
+    .form-container {
+        width: 30%; /* Allow more space on medium screens */
+    }
+    .form-container input[type="text"] {
+        width: 90%;
+        
+    }
+
+    #container {
+        flex-direction: column; /* Stack camera and canvas vertically */
+        align-items: center; /* Center camera and canvas */
+    }
+
+    .output_canvas {
+        max-width: 100%; /* Full width for smaller screens */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    .title-card {
+        margin-bottom: 60px;
+        width: 95%; /* Responsive title card width */
+    }
+}
+
+@media (max-width: 992px) {
+    .form-container {
+        width: 40%; /* Allow more space on medium screens */
+    }
+    .form-container input[type="text"] {
+        width: 40%;
+        
+    }
+
+    .output_canvas {
+        width: 80%; /* Smaller output canvas */
+        height: auto; /* Maintain aspect ratio */
+    }
+}
+
+@media (max-width: 768px) {
+   
+    .form-container input[type="text"] {
+        width: 90%;
+        
+    }
+    .main-container {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Center elements */
+    }
+
+    
+
+    #container {
+        flex-direction: column; /* Stack camera and canvas vertically */
+        align-items: center; /* Center camera and canvas */
+    }
+
+    .output_canvas {
+        max-width: 100%; /* Full width for smaller screens */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    .title-card {
+        margin-bottom: 100px;
+        width: 95%; /* Responsive title card width */
+    }
+}
+
+@media (max-width: 576px) {
+    .form-container {
+        width: 100%; /* Full width for mobile */
+    }
+
+    .form-container input[type="text"],
+    .form-container button {
+        font-size: 14px; /* Smaller font size for mobile */
+    }
+
+    .title-card h1 {
+        font-size: 1.5em; /* Smaller heading size */
+    }
+
+    .title-card p {
+        margin-bottom: 100px;
+        font-size: 1em; /* Smaller paragraph size */
+    }
+}
+@media (max-width: 480px) {
+    .form-container {
+        width: 100%; /* Full width for mobile */
+    }
+
+    .form-container input[type="text"],
+    .form-container button {
+        font-size: 14px; /* Smaller font size for mobile */
+    }
+
+    .title-card h1 {
+        font-size: 1.5em; /* Smaller heading size */
+    }
+
+    .title-card p {
+        margin-bottom: 100px;
+        font-size: 1em; /* Smaller paragraph size */
+    }
+}
+
+@media (orientation: portrait) {
+    .form-container {
+        max-width: 94%; /* More room for forms in portrait mode */
+    }
+    .form-container input[type="text"] {
+        width: 94%;
+        
+    }
+
+    .output_canvas {
+        width: 100%; /* Full width in portrait mode */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    #camera {
+        width: 80px; /* Smaller camera in portrait */
+        height: 80px; /* Keep aspect ratio */
+    }
+}
 
