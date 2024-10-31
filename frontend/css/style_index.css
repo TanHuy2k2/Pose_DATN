@@ -1,3 +1,4 @@
+/* Top Navigation */
 .topnav {
   background-color: #333;
   overflow: hidden;
@@ -13,6 +14,14 @@
   cursor: pointer;
 }
 
+/* Background settings */
+html {
+  background: linear-gradient(to right, rgba(21, 0, 255, 0.5), rgba(128, 128, 128, 0.5)),
+              url('/frontend/images/c.jpg') no-repeat center center fixed;
+  background-size: cover; /* Ensures the image covers the entire background */
+}
+
+/* Exercise box */
 .exercise-box {
   display: none;
   justify-content: space-around;
@@ -20,7 +29,8 @@
   border: 2px solid black;
   border-radius: 10px;
   padding: 6px;
-  width: 700px;
+  width: 90%; /* Make width responsive */
+  max-width: 700px; /* Set max width */
   height: 40px;
   background-color: white;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
@@ -32,10 +42,12 @@
   font-weight: bold;
 }
 
+/* Form Container */
 #formContainer {
   display: block;
 }
 
+/* Body and HTML settings */
 body, html {
   margin: 0;
   padding: 0;
@@ -44,9 +56,9 @@ body, html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
 }
 
+/* Main Container */
 .main-container {
   display: flex;
   justify-content: flex-end;
@@ -56,8 +68,10 @@ body, html {
   margin-top: 2px;
 }
 
+/* Form settings */
 .form-container {
-  width: 200px;
+  width: 80%; /* Make width responsive */
+  max-width: 200px; /* Set max width */
   margin-left: 0;
   padding: 15px;
   border: 2px solid #333;
@@ -68,6 +82,7 @@ body, html {
   left: 0;
 }
 
+/* Form row settings */
 .form-container .form-row {
   display: flex;
   align-items: center;
@@ -99,25 +114,31 @@ body, html {
   background-color: white;
 }
 
+/* Container for camera */
 #container {
   display: flex;
 }
 
+/* Camera settings */
 #camera {
-  width: 640px;
-  height: 480px;
+  width: 90%; /* Make width responsive */
+  max-width: 640px; /* Set max width */
+  height: auto; /* Adjust height automatically */
   border: 2px solid #333;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Mini container */
 #mini-container {
   display: grid;
 }
 
+/* Video check settings */
 #video_check {
   align-self: self-end;
-  width: 150px;
+  width: 90%; /* Make width responsive */
+  max-width: 150px; /* Set max width */
   height: 150px;
   border: 2px solid #333;
   border-radius: 10px;
@@ -125,10 +146,34 @@ body, html {
   background-color: black;
 }
 
+/* Output canvas settings */
 .output_canvas {
-  width: 320px;
-  height: 240px;
+  width: 90%; /* Make width responsive */
+  max-width: 320px; /* Set max width */
+  height: auto; /* Adjust height automatically */
   border: 2px solid #333;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column; /* Stack elements vertically on smaller screens */
+    margin-right: 0; /* Remove negative margin */
+  }
+
+  .form-container {
+    position: relative; /* Change position for better layout on small screens */
+    left: auto;
+    margin: 0 auto; /* Center form on small screens */
+  }
+
+  .exercise-box {
+    width: 95%; /* Increase width for smaller screens */
+  }
+
+  #camera, #video_check, .output_canvas {
+    width: 100%; /* Make all elements take full width on smaller screens */
+  }
 }

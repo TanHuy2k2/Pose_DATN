@@ -24,9 +24,10 @@ html {
 
 
 /* Form styling */
-.form-container {
+.form_container {
     width: 100%;
     max-width: 250px;
+    margin-bottom: 30%;
     margin-left: 0; /* Align the form on the far left */
     padding: 10px;
     border: 1px solid #ccc;
@@ -39,7 +40,7 @@ html {
 }
 
 /* Input field styling */
-.form-container input[type="text"] {
+.form_container input[type="text"] {
     width: 90%;
     padding: 10px;
     margin: 10px 0;
@@ -48,7 +49,7 @@ html {
 }
 
 /* Button styling */
-.form-container button {
+.form_container button {
     margin-top: 10px;
     padding: 10px 20px;
     border: none;
@@ -59,7 +60,7 @@ html {
     cursor: pointer;
 }
 
-.form-container button:hover {
+.form_container button:hover {
     background-color: #45a049;
 }
 
@@ -173,8 +174,9 @@ html {
         margin-left: 50px;
     }
 
-    .form-container{
+    .form_container{
         margin-top: -10px;
+        margin-bottom: 50px !important; 
     }
 }
 
@@ -184,10 +186,10 @@ html {
         height: 480px; /* Maintain aspect ratio */
     }
 
-    .form-container {
+    .form_container {
         width: 40%; /* Allow more space on medium screens */
     }
-    .form-container input[type="text"] {
+    .form_container input[type="text"] {
         width: 80%;
     }
 }
@@ -209,6 +211,7 @@ html {
     }
     .title-card{
         width: 100%;
+        margin-bottom: 30%;
     }
     .title-card h1{
         font-size: 1.4em;
@@ -218,18 +221,18 @@ html {
         margin-left: 10px;
     }
 
-    .form-container input[type="text"] {
+    .form_container input[type="text"] {
         width: 90%;
     }
 }
 
 @media (max-width: 576px) {
-    .form-container {
+    .form_container {
         width: 100%; /* Full width for mobile */
     }
 
-    .form-container input[type="text"],
-    .form-container button {
+    .form_container input[type="text"],
+    .form_container button {
         font-size: 14px; /* Smaller font size for mobile */
     }
     .title-card {
@@ -245,12 +248,12 @@ html {
     }
 }
 @media (max-width: 480px) {
-    .form-container {
+    .form_container {
         width: 100%; /* Full width for mobile */
     }
 
-    .form-container input[type="text"],
-    .form-container button {
+    .form_container input[type="text"],
+    .form_container button {
         font-size: 14px; /* Smaller font size for mobile */
     }
 
@@ -264,13 +267,13 @@ html {
 }
 
 @media (max-width: 350px) {
-    .form-container {
+    .form_container {
         width: 100%; /* Full width for mobile */
     }
 
-    .form-container input[type="text"],
+    .form_container input[type="text"],
 
-    .form-container button {
+    .form_container button {
         font-size: 14px; /* Smaller font size for mobile */
     }
     .title-card {

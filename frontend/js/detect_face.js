@@ -5,7 +5,7 @@ const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
 const drawingUtils = window;
 const container = document.getElementById('container');
 
-const formContainer = document.querySelector('.form-container');
+const formContainer = document.querySelector('.form_container');
 let loginForm = document.getElementById("form");
 const input_name = document.getElementById('name');
 const input_age = document.getElementById('age');
@@ -157,7 +157,7 @@ async function predictAndStore(tensorImage) {
 
             video.style.display = 'none';
             toggleButton.style.display = 'none';
-            formContainer.style.marginBottom = "50px"; 
+
 
 
             // Mark the face as processed and stop the camera
