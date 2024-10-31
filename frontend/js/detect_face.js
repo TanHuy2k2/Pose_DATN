@@ -43,7 +43,7 @@ worker.onmessage = function(e) {
             document.cookie = "gender=" + result['gender'];
             document.cookie = "level=" + result['level'];
             document.cookie = "bmi=" + result['bmi'];
-            location.href = 'http://localhost:3000/fontend/index.html';
+            location.href = 'http://localhost:3000/frontend/index.html';
             check = true
         } else {
             if (face) {
@@ -63,7 +63,7 @@ worker.onmessage = function(e) {
             document.cookie = "gender=" + result['gender'];
             document.cookie = "level=" + result['level'];
             document.cookie = "bmi=" + result['bmi'];
-            location.href = 'http://localhost:3000/fontend/index.html';
+            location.href = 'http://localhost:3000/frontend/index.html';
             worker.terminate();
         } else {
             console.error('Error while saving data to the database.');

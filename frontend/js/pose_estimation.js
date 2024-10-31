@@ -19,7 +19,7 @@ const input_rest = document.getElementById('rest');
 const exercise_name = document.getElementById('exercise-name');
 
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false;
-let exercise = ["dumbbell_curl", "push up","complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["DUMBBELL CURL", "PUSH UP","complete"], next_ex = 0, hasSpoken = false;
 
 function click_form() {
 
@@ -77,6 +77,7 @@ function set_exercise(db_weights, set, rep, rest){
     input_sets.textContent = set;
     input_reps.textContent = rep;
     input_rest.textContent = rest;
+    exercise_name.textContent = exercise[next_ex];
 }
 
 function getCookies() {
@@ -158,14 +159,11 @@ function onResults(results) {
         const right_wrist = [landmarks[16].x, landmarks[16].y];
         const left_wrist = [landmarks[15].x, landmarks[15].y];
 
-        if (exercise[next_ex] == "dumbbell_curl"){
-            exercise_name.textContent = "DUMBBELL CURL"
+        if (exercise[next_ex] == "DUMBBELL CURL"){
             dumbbell_curl(landmarks[11], landmarks[12], left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist);
-        }else if (exercise[next_ex] == "push up"){
-            exercise_name.textContent = "PUSH UP";
         }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
-            location.href = 'http://localhost:3000/fontend/main.html';
+            location.href = 'http://localhost:3000/frontend/main.html';
         }
         
     }
