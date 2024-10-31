@@ -16,10 +16,13 @@ const input_sets = document.getElementById('sets');
 const input_reps = document.getElementById('reps');
 const input_rest = document.getElementById('rest');
 
+const exercise_box = document.getElementById('exercise-box');
 const exercise_name = document.getElementById('exercise-name');
+const dumbbell = document.getElementById('dumbbell');
 
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false;
-let exercise = ["DUMBBELL CURL", "PUSH UP","complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["PUSH UP", "DUMBBELL CURL", "complete"], next_ex = 0, hasSpoken = false;
+let box_ex = true;
 
 function click_form() {
 
@@ -58,9 +61,8 @@ let worker = new Worker('js/worker.js');
 worker.onmessage = function(e) {
     const { type, result } = e.data;
 
-    if (type === 'getEX') {
+    if (type === 'getEX_1') {
         if (result['check'] === 'True') {
-            console.log(result);
             db_weights = result['db_weights'];
             sets = result['sets'];
             reps = result['reps'];
@@ -69,10 +71,19 @@ worker.onmessage = function(e) {
             count_rest = rest;
             set_exercise(db_weights, sets, reps, rest);
         }
+    }else if (type === 'getEX_2') {
+        if (result['check'] === 'True') {
+            sets = result['sets'];
+            reps = result['reps'];
+            rest = result['rest'];
+            count_reps = reps;
+            count_rest = rest;
+            set_exercise(0, sets, reps, rest);
+        }
     }
 }
 
-function set_exercise(db_weights, set, rep, rest){
+function set_exercise(db_weights = 0, set = 0, rep = 0, rest = 0){
     input_db.textContent = db_weights
     input_sets.textContent = set;
     input_reps.textContent = rep;
@@ -94,8 +105,6 @@ function getCookies() {
     input_bmi.value = cookieObj['bmi'];
     input_level.value = cookieObj['level'];
 
-    worker.postMessage({ type: 'get_exercise',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
-    
     speakText("Okay let's start!!!");
 }
 
@@ -134,6 +143,7 @@ function onResults(results) {
     if (!results.poseLandmarks) {
         return;
     }
+
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
@@ -160,7 +170,19 @@ function onResults(results) {
         const left_wrist = [landmarks[15].x, landmarks[15].y];
 
         if (exercise[next_ex] == "DUMBBELL CURL"){
+            box_ex = true;
+            if (box_ex){
+                worker.postMessage({ type: 'get_exercise_1',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
+                box_ex = false;
+            }
             dumbbell_curl(landmarks[11], landmarks[12], left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist);
+        }else if(exercise[next_ex] == "PUSH UP"){
+            exercise_box.style.display = "flex";
+            dumbbell.style.display = "none";
+            if (box_ex){
+                worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
+                box_ex = false;
+            }
         }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
             location.href = 'http://localhost:3000/frontend/main.html';

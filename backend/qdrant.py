@@ -44,23 +44,6 @@ def verify(embedding, lower_threshold=0.3, upper_threshold=0.7, limit=1, count_i
         print(f"An error occurred during the search: {e}")
         return False
 
-def save_face_file(face_image, count_id):
-    db_path = "face-db"
-    try:
-        if not os.path.exists(db_path):
-            os.makedirs(db_path)
-        
-        filename = f'face_image_{count_id}.jpg'
-        file_path = os.path.join(db_path, filename)
-        
-        face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
-        face_image = cv2.resize(face_image, (224, 224))
-        cv2.imwrite(file_path, face_image)
-        
-        print(f"Face image successfully saved to {file_path}.")
-    except Exception as e:
-        print(f"An error occurred while saving face image: {e}")
-
 def load_face_data(query_vector):
     search_result = qclient.search(
         collection_name=collection_name,

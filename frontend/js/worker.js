@@ -45,7 +45,7 @@ onmessage = async function(e) {
 
         const result = await response.json();
         postMessage({ type: 'put2DBResult', result });
-    }else if (type === "get_exercise"){
+    }else if (type === "get_exercise_1"){
         // Save data to database
         const response = await fetch('http://localhost:2000/get_exercise_1', {
             method: 'POST',
@@ -57,6 +57,19 @@ onmessage = async function(e) {
         });
 
         const result = await response.json();
-        postMessage({ type: 'getEX', result });
+        postMessage({ type: 'getEX_1', result });
+    }else if (type === "get_exercise_2"){
+        // Save data to database
+        const response = await fetch('http://localhost:2000/get_exercise_2', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ gender: gender_db, age: age_db, level: level_db})
+        });
+
+        const result = await response.json();
+        postMessage({ type: 'getEX_2', result });
     }
 };

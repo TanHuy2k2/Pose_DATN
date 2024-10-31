@@ -14,7 +14,7 @@
 }
 
 .exercise-box {
-  display: flex;
+  display: none;
   justify-content: space-around;
   align-items: center;
   border: 2px solid black;

@@ -5,8 +5,8 @@ import io
 import numpy as np
 import base64
 from deepface import DeepFace
-from qdrant import verify, load_face_data, save_face_data, save_face_file
-from Access_sheet import get_sheet1_info
+from qdrant import verify, load_face_data, save_face_data
+from Access_sheet import get_sheet1_info, get_sheet2_info
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -100,7 +100,7 @@ def putDB():
     return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, 'bmi': bmi})
 
 @app.route('/get_exercise_1', methods=['POST'])
-def Get_EX():
+def Get_EX_1():
     data = request.get_json()
     age = data.get('age')
     gender = data.get('gender')
@@ -120,7 +120,33 @@ def Get_EX():
 
     result = get_sheet1_info(gender, age_lb, bmi, level)
 
-    return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
+    if result:
+        return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
+    return jsonify({'check': 'False', 'db_weights': "", 'rest': "", 'sets': "", 'reps': ""})
+
+@app.route('/get_exercise_2', methods=['POST'])
+def Get_EX_2():
+    data = request.get_json()
+    age = data.get('age')
+    gender = data.get('gender')
+    level = data.get('level')    
+
+    if age:
+        [first, last] = age.strip().split('-')
+
+    if int(last) < 18:
+        age_lb = "15-18"
+    elif int(last) < 30:
+        age_lb = "18-30"
+    elif int(last) <= 50:
+        age_lb = "30-50"
+    else: age_lb = ">50"
+
+    result = get_sheet2_info(gender, age_lb, level)
+
+    if result:
+        return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
+    return jsonify({'check': 'False', 'rest': "", 'sets': "", 'reps': ""})
 
 if __name__ == '__main__':
     app.run(debug=False, port = 2000)
