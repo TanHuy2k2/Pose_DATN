@@ -10,7 +10,7 @@ body, html {
 
 html {
     background: linear-gradient(to right, rgba(21, 0, 255, 0.5), rgba(128, 128, 128, 0.5)), 
-                url('/fontend/images/c.jpg') no-repeat center center fixed;
+                url('/frontend/images/c.jpg') no-repeat center center fixed;
     background-size: cover; /* Optional: to ensure the image covers the entire background */
 }
 
