@@ -16,8 +16,10 @@ const input_sets = document.getElementById('sets');
 const input_reps = document.getElementById('reps');
 const input_rest = document.getElementById('rest');
 
+const exercise_name = document.getElementById('exercise-name');
+
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false;
-let  exercise = ["dumbbell_curl", "complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["dumbbell_curl", "push up","complete"], next_ex = 0, hasSpoken = false;
 
 function click_form() {
 
@@ -157,8 +159,11 @@ function onResults(results) {
         const left_wrist = [landmarks[15].x, landmarks[15].y];
 
         if (exercise[next_ex] == "dumbbell_curl"){
+            exercise_name.textContent = "DUMBBELL CURL"
             dumbbell_curl(landmarks[11], landmarks[12], left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist);
-        }else if (exercise[next_ex] == "complete"){
+        }else if (exercise[next_ex] == "push up"){
+            exercise_name.textContent = "PUSH UP";
+        }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
             location.href = 'http://localhost:3000/fontend/main.html';
         }

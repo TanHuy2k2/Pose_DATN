@@ -3,7 +3,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # Cấu hình xác thực
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("./backend/weights/googleAPI.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("../backend/weights/googleAPI.json", scope)
 client = gspread.authorize(creds)
 
 # Mở Google Sheet

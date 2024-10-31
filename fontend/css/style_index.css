@@ -13,43 +13,19 @@
   cursor: pointer;
 }
 
-.top-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative; /* Ensures child elements position relative to .top-page */
-  padding: 10px 0;
-}
-
-.exercise-name {
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #333;
-  border-radius: 3px;
-  padding: 3px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 300px; /* Adjust as needed */
-  font-size: 16px;
-  margin-bottom: 3px; /* Space between .exercise-name and .exercise-box */
-}
-
-.exercise-name h3{
-  margin: 6px auto;
-}
-
 .exercise-box {
   display: flex;
   justify-content: space-around;
   align-items: center;
   border: 2px solid black;
   border-radius: 10px;
-  padding: 7px;
-  width: 650px;
-  height: 30px;
+  padding: 6px;
+  width: 700px;
+  height: 40px;
   background-color: white;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 15px auto;
+  margin-top: -25px;
 }
 
 .exercise-box span {
