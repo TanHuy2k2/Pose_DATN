@@ -6,7 +6,7 @@ import numpy as np
 import base64
 from deepface import DeepFace
 from qdrant import verify, load_face_data, save_face_data, save_face_file
-from Access_sheet import get_workout_info
+from Access_sheet import get_sheet1_info
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -99,7 +99,7 @@ def putDB():
 
     return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, 'bmi': bmi})
 
-@app.route('/get_exercise', methods=['POST'])
+@app.route('/get_exercise_1', methods=['POST'])
 def Get_EX():
     data = request.get_json()
     age = data.get('age')
@@ -118,7 +118,7 @@ def Get_EX():
         age_lb = "30-50"
     else: age_lb = ">50"
 
-    result = get_workout_info(gender, age_lb, bmi, level)
+    result = get_sheet1_info(gender, age_lb, bmi, level)
 
     return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
 
