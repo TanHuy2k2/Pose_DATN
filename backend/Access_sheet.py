@@ -36,3 +36,25 @@ def get_workout_info(gender, age, bmi, fitness_level):
 #     print(f"Rest: {result['rest']} seconds, Sets: {result['sets']}, Reps: {result['reps']}")
 # else:
 #     print(result)
+
+# sheet2 = client.open_by_url(spreadsheet_url).sheet2  # Mở sheet2
+
+# # Hàm tìm dữ liệu trong bảng dựa trên gender, age, fitness level
+# def get_pushup_info(gender, age, fitness_level):
+#     # Lấy toàn bộ dữ liệu từ Google Sheet
+#     data = sheet2.get_all_records()
+
+#     # Duyệt qua các dòng trong bảng dựa trên gender, age, fitness level
+#     for row in data:
+#         if (row["Gender"] == gender and
+#             row["Age"] == age and
+#             row["Fitness Level"] == fitness_level):
+#             # Trả về các giá trị Rest, Sets, Reps
+#             return {
+#                 "rest": row["Rest (sec)"],
+#                 "sets": row["Sets"],
+#                 "reps": row["Reps"]
+#             }
+#     return "No data available for the given inputs."        
+        
+
