@@ -19,15 +19,13 @@
   align-items: center;
   border: 2px solid black;
   border-radius: 10px;
-  padding: 7px;
-  width: 650px;
-  height: 30px;
+  padding: 6px;
+  width: 700px;
+  height: 40px;
   background-color: white;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  top: 7px; /* Adjust top as needed to ensure it's below the topnav */
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 15px auto;
+  margin-top: -25px;
 }
 
 .exercise-box span {
@@ -55,7 +53,7 @@ body, html {
   align-items: flex-start;
   gap: 10px;
   margin-right: -90px;
-  margin-top: 10px;
+  margin-top: 2px;
 }
 
 .form-container {

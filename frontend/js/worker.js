@@ -47,7 +47,7 @@ onmessage = async function(e) {
         postMessage({ type: 'put2DBResult', result });
     }else if (type === "get_exercise"){
         // Save data to database
-        const response = await fetch('http://localhost:2000/get_exercise', {
+        const response = await fetch('http://localhost:2000/get_exercise_1', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
