@@ -144,6 +144,8 @@ def Get_EX_2():
 
     result = get_sheet2_info(gender, age_lb, level)
 
+    print(result)
+    
     if result:
         return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
     return jsonify({'check': 'False', 'rest': "", 'sets': "", 'reps': ""})

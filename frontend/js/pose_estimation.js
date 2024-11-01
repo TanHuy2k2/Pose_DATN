@@ -2,6 +2,8 @@ const videoElement = document.getElementById('camera');
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
 
+const source = document.getElementById("video_check");
+
 const form = document.getElementById("formContainer");
 const icon = document.getElementById("toggleIcon");
 
@@ -20,8 +22,9 @@ const exercise_box = document.getElementById('exercise-box');
 const exercise_name = document.getElementById('exercise-name');
 const dumbbell = document.getElementById('dumbbell');
 
+let shoulder = [0,0], elbow = [0,0], wrist = [0,0];
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false;
-let exercise = ["PUSH UP", "DUMBBELL CURL", "complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["DUMBBELL CURL", "PUSH UP", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true;
 
 function click_form() {
@@ -160,24 +163,14 @@ function onResults(results) {
 
     if (landmarks) {
 
-        const right_shoulder = [landmarks[12].x, landmarks[12].y];
-        const left_shoulder = [landmarks[11].x, landmarks[11].y];
-
-        const right_elbow = [landmarks[14].x, landmarks[14].y];
-        const left_elbow = [landmarks[13].x, landmarks[13].y];
-
-        const right_wrist = [landmarks[16].x, landmarks[16].y];
-        const left_wrist = [landmarks[15].x, landmarks[15].y];
-
         if (exercise[next_ex] == "DUMBBELL CURL"){
-            box_ex = true;
             if (box_ex){
+                exercise_box.style.display = "flex";
                 worker.postMessage({ type: 'get_exercise_1',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 box_ex = false;
             }
-            dumbbell_curl(landmarks[11], landmarks[12], left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist);
-        }else if(exercise[next_ex] == "PUSH UP"){
-            exercise_box.style.display = "flex";
+            dumbbell_curl(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16]);
+        }else if(exercise[next_ex] == "PUSH UP"){    
             dumbbell.style.display = "none";
             if (box_ex){
                 worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
@@ -193,27 +186,26 @@ function onResults(results) {
     canvasCtx.restore();
 }
 
-function dumbbell_curl(lm_11, lm_12, left_shoulder, left_elbow, left_wrist, right_shoulder, right_elbow, right_wrist){
+function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 
-    if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8)){
-        shoulder = left_shoulder;
-        elbow = left_elbow;
-        wrist = left_wrist;
-    }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8)){
-        shoulder = right_shoulder;
-        elbow = right_elbow;
-        wrist = right_wrist;
+    if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8) && (lm_15.visibility > 0.8)){
+        shoulder = [lm_11.x, lm_11.y];
+        elbow = [lm_13.x, lm_13.y];
+        wrist = [lm_15.x, lm_15.y];
+    }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8) && (lm_16.visibility > 0.8)){
+        shoulder = [lm_12.x, lm_12.y];
+        elbow = [lm_14.x, lm_14.y];
+        wrist = [lm_16.x, lm_16.y];
     }        
-
     if (Math.abs(shoulder[0] - elbow[0]) <= 0.07){
         // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
         const angle = calculate_angle(shoulder, elbow, wrist);
 
-        if (angle < 160 && angle > 150 && !check_reps && !check_sets){
+        if (angle > 155 && !check_reps && !check_sets){
             check_reps = true;
         }
 
-        if (angle > 30 && angle < 40 && check_reps){
+        if (angle < 45 && check_reps){
             console.log("angle: ", angle)
             check_reps = false;
             count_reps -= 1;
@@ -229,7 +221,11 @@ function dumbbell_curl(lm_11, lm_12, left_shoulder, left_elbow, left_wrist, righ
 
         if (sets == 0){
             check_sets = false;
+            box_ex = true;
             next_ex += 1;
+            source.src = "video/pushup.mp4";
+            source.load();
+            source.play(); 
         }
 
         if (check_sets){
@@ -244,13 +240,17 @@ function dumbbell_curl(lm_11, lm_12, left_shoulder, left_elbow, left_wrist, righ
         
     }
 } 
+
+function push_up(lm_11, lm_12, lm13, lm14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
+
+}
     
 const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
 }});
 
 pose.setOptions({
-  modelComplexity: 2,
+  modelComplexity: 1,
   static_image_mode: false, 
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,

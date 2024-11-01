@@ -143,14 +143,14 @@ body, html {
   border: 2px solid #333;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  background-color: black;
+  background-color: white;
 }
 
 /* Output canvas settings */
 .output_canvas {
   width: 90%; /* Make width responsive */
   max-width: 320px; /* Set max width */
-  height: auto; /* Adjust height automatically */
+  height: 200px; /* Adjust height automatically */
   border: 2px solid #333;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
