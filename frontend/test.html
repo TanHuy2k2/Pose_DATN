@@ -3,61 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text to Speech Example</title>
+  <title>Notification Example</title>
   <style>
+    /* Basic reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f2f5;
     }
 
-    #text {
-      width: 100%;
-      height: 100px;
+    #notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .notification {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 15px 20px;
       margin-bottom: 10px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
       border-radius: 5px;
-      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transform: translateX(100%);
+      animation: slideIn 0.5s forwards, fadeOut 0.5s ease-out 4.5s forwards;
     }
 
-    button:hover {
-      background-color: #45a049;
+    /* Slide-in animation */
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
+
+    /* Fade-out animation */
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+
   </style>
 </head>
 <body>
-
-  <h1>Text to Speech</h1>
-
-  <textarea id="text" placeholder="Type your text here"></textarea><br>
-  <button id="speakButton">Speak Text</button>
+  <div id="notification-container"></div>
+  <button onclick="showNotification('This is a test notification!')">Show Notification</button>
 
   <script>
-    // Text-to-Speech functionality using Web Speech API
-    const speakButton = document.getElementById('speakButton');
+    function showNotification(message) {
+      const notificationContainer = document.getElementById("notification-container");
 
-    speakButton.addEventListener('click', () => {
-      const text = document.getElementById('text').value;
+      // Create the notification element
+      const notification = document.createElement("div");
+      notification.classList.add("notification");
+      notification.textContent = message;
 
-      if (text.trim() === '') {
-        alert('Please enter some text.');
-        return;
-      }
+      // Append notification to the container
+      notificationContainer.appendChild(notification);
 
-      // Create a new SpeechSynthesisUtterance object
-      const speech = new SpeechSynthesisUtterance();
-      speech.text = text;
-      speech.lang = 'en-US';  // You can change the language code
+      // Remove the notification after 5 seconds
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    }
 
-      // Speak the text
-      window.speechSynthesis.speak(speech);
-    });
   </script>
-
 </body>
 </html>
