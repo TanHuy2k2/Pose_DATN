@@ -6,7 +6,7 @@ import numpy as np
 import base64
 from deepface import DeepFace
 from qdrant import verify, load_face_data, save_face_data
-from Access_sheet import get_sheet1_info, get_sheet2_info
+from Access_sheet import get_sheet1_info, get_sheet2_info, get_sheet3_info
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -143,8 +143,31 @@ def Get_EX_2():
     else: age_lb = ">50"
 
     result = get_sheet2_info(gender, age_lb, level)
+    
+    if result:
+        return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
+    return jsonify({'check': 'False', 'rest': "", 'sets': "", 'reps': ""})
 
-    print(result)
+@app.route('/get_exercise_3', methods=['POST'])
+def Get_EX_3():
+    data = request.get_json()
+    age = data.get('age')
+    gender = data.get('gender')
+    bmi = data.get('bmi')
+    level = data.get('level')    
+
+    if age:
+        [first, last] = age.strip().split('-')
+
+    if int(last) < 18:
+        age_lb = "15-18"
+    elif int(last) < 30:
+        age_lb = "18-30"
+    elif int(last) <= 50:
+        age_lb = "30-50"
+    else: age_lb = ">50"
+
+    result = get_sheet3_info(gender, age_lb, bmi, level)
     
     if result:
         return jsonify({'check': 'True', 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})

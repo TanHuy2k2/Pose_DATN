@@ -25,8 +25,8 @@ const exercise_name = document.getElementById('exercise-name');
 const dumbbell = document.getElementById('dumbbell');
 
 let shoulder = [0,0], elbow = [0,0], wrist = [0,0], hip = [0,0], knee = [0,0], ankle = [0,0];
-let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true;
-let exercise = ["DUMBBELL CURL", "PUSH UP", "complete"], next_ex = 0, hasSpoken = false;
+let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
+let exercise = ["DUMBBELL CURL", "PUSH UP", "SQUAT", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true;
 
 function click_form() {
@@ -96,6 +96,15 @@ worker.onmessage = function(e) {
             count_rest = rest;
             set_exercise(0, sets, reps, rest);
         }
+    }else if (type === 'getEX_3') {
+        if (result['check'] === 'True') {
+            sets = result['sets'];
+            reps = result['reps'];
+            rest = result['rest'];
+            count_reps = reps;
+            count_rest = rest;
+            set_exercise(0, sets, reps, rest);
+        }
     }
 }
 
@@ -137,30 +146,27 @@ function calculate_angle(a, b, c){
 }
 
 function countdown(restTime) {
-    set_exercise( db_weights, sets, count_reps, count_rest);
-    if (restTime > 0 ) {
-        count_rest = restTime;
-        setTimeout(() => {
-            countdown(restTime - 1);
-        }, 1000); // Decrease restTime every second
-    } else {
-        if (!hasSpoken){
-            speakText("Do it again!!!");
-            hasSpoken = true;
-        }
-        count_rest = rest;
-        check_sets = false; // Reset check_sets for the next set
-        set_ex = true;
-
-    }
-}
+    check_count = false;
+    set_exercise(db_weights, sets, count_reps, count_rest);
     
-function onResults(results) {
+    count_rest = restTime;
+    let intervalId = setInterval(() => {
+        if (count_rest > 0) {
+            count_rest--;
+        } else {
+            clearInterval(intervalId); // Stop the interval
+            if (!hasSpoken) {
+                speakText("Do it again!!!");
+                hasSpoken = true;
+            }
+            count_rest = rest;  // Reset for the next round
+            check_sets = false;  // Reset for the next set
+            set_ex = true;
+        }
+    }, 1000); // Run every second
+}
 
-    if (!results.poseLandmarks) {
-        return;
-    }
-
+function draw_Canvas(results){
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
@@ -173,6 +179,13 @@ function onResults(results) {
 
     drawLandmarks(canvasCtx, results.poseLandmarks,
                     {color: '#FF0000', lineWidth: 0.2, radius: 2});
+}
+    
+function onResults(results) {
+
+    if (!results.poseLandmarks) {
+        return;
+    }
 
     const landmarks = results.poseLandmarks;
 
@@ -185,17 +198,36 @@ function onResults(results) {
                 showNotification("Exercise is DUMBBELL CURL!!!");
                 box_ex = false;
             }
+            draw_Canvas(results);
             dumbbell_curl(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16]);
         }else if(exercise[next_ex] == "PUSH UP"){    
             dumbbell.style.display = "none";
             if (box_ex){
+                sets = 0;
                 worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
                 showNotification("Next exercise is PUSH UP!!!");
                 box_ex = false;
                 check_reps = false; 
                 check_sets = false;
                 hasSpoken = false;
+                check_count = false;
             }
+            draw_Canvas(results);
+            push_up(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16],
+                landmarks[23], landmarks[24], landmarks[25], landmarks[26], landmarks[27], landmarks[28]);
+        }else if(exercise[next_ex] == "SQUAT"){
+            dumbbell.style.display = "none";
+            if (box_ex){
+                sets = 0;
+                worker.postMessage({ type: 'get_exercise_3',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
+                showNotification("Next exercise is SQUAT!!!");
+                box_ex = false;
+                check_reps = false; 
+                check_sets = false;
+                hasSpoken = false;
+                check_count = false;
+            }
+            draw_Canvas(results);
         }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
             showNotification("You're complete!!!");
@@ -239,6 +271,7 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
         hasSpoken = false;
         count_reps = reps;
         check_sets = true;
+        check_count = true;
     }
 
     if (sets == 0){
@@ -247,13 +280,14 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
     }else if (sets < 0){
         check_sets = false;
         box_ex = true;
+        check_count = false;
         next_ex += 1;
         source.src = "video/pushup.mp4";
         source.load();
     }
 
-    if (check_sets){
-        countdown(count_rest);
+    if (check_count){
+        countdown(rest);
     }
 
     set_exercise(db_weights, sets, count_reps, count_rest);
@@ -289,29 +323,42 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     const angle_knee = calculate_angle(hip, knee, ankle); 
 
     if (angle_elbow > 160 && (160 < angle_hip, angle_knee < 180) && !check_reps && !check_sets){
+        console.log("elbow: ", angle_elbow);
+        console.log("hip: ", angle_hip);
+        console.log("knee: ", angle_knee);
         check_reps = true;
     }
     if (angle_elbow < 90 && check_reps){
-        console.log("angle: ", angle)
+        console.log("*****************************");
+        console.log("elbow: ", angle_elbow);
+        console.log("hip: ", angle_hip);
+        console.log("knee: ", angle_knee);
+        check_reps = true;
         check_reps = false;
         count_reps -= 1;
     }
-    if (count_reps == 0){
+
+    if (count_reps == 0 && set_ex){
         speakText("Rest time!!!");
         sets -= 1
         hasSpoken = false;
         count_reps = reps;
         check_sets = true;
+        check_count = true;
     }
 
     if (sets == 0){
+        count_reps = 0;
+        set_ex = false;
+    }else if (sets < 0){
         check_sets = false;
         box_ex = true;
+        check_count = false;
         next_ex += 1;
     }
 
-    if (check_sets){
-        countdown(count_rest);
+    if (check_count){
+        countdown(rest);
     }
 
     set_exercise(0, sets, count_reps, count_rest);
@@ -321,6 +368,10 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
     canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
     canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
+}
+
+function squat(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
+
 }
     
 const pose = new Pose({locateFile: (file) => {
