@@ -362,6 +362,8 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
         box_ex = true;
         check_count = false;
         next_ex += 1;
+        source.src = "video/squat.mp4";
+        source.load();
     }
 
     if (check_count){
