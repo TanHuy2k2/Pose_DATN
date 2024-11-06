@@ -1,7 +1,7 @@
 let bmi;
 // Listen for messages from the main thread
 onmessage = async function(e) {
-    const { type, name_db, gender_db, age_db, height_db, weight_db, level_db, image64, bmi_label } = e.data;
+    const { type, name_db, gender_db, age_db, height_db, weight_db, level_db, image64, bmi_label, exercise_db, form_db } = e.data;
 
     if (type === 'checkFace') {
         // Perform face check
@@ -45,6 +45,20 @@ onmessage = async function(e) {
 
         const result = await response.json();
         postMessage({ type: 'put2DBResult', result });
+    }else if (type === "update_inf"){
+        // Save data to database
+        const response = await fetch('http://localhost:2000/update_inf', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ exercise_db, form_db})
+        });
+
+        const result = await response.json();
+        postMessage({ type: 'getEX_1', result });
+
     }else if (type === "get_exercise_1"){
         // Save data to database
         const response = await fetch('http://localhost:2000/get_exercise_1', {
@@ -59,6 +73,7 @@ onmessage = async function(e) {
         const result = await response.json();
         console.log("1: ", result)
         postMessage({ type: 'getEX_1', result });
+
     }else if (type === "get_exercise_2"){
         // Save data to database
         const response = await fetch('http://localhost:2000/get_exercise_2', {
@@ -73,6 +88,7 @@ onmessage = async function(e) {
         const result = await response.json();
         console.log("2: ", result)
         postMessage({ type: 'getEX_2', result });
+
     }else if (type === "get_exercise_3"){
         // Save data to database
         const response = await fetch('http://localhost:2000/get_exercise_3', {
@@ -87,5 +103,6 @@ onmessage = async function(e) {
         const result = await response.json();
         console.log("3: ", result)
         postMessage({ type: 'getEX_3', result });
+
     }
 };

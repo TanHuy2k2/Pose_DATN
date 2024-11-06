@@ -44,10 +44,10 @@ def process_image():
     check = verify(face_embed)
 
     if check: 
-        name, gender, age, level, bmi = load_face_data(face_embed)
-        return jsonify({'check': 'True','name': name, 'age': age, 'gender': gender, 'level': level, "bmi": bmi})
+        id, name, gender, age, level, bmi = load_face_data(face_embed)
+        return jsonify({'check': 'True', 'id':id, 'name': name, 'age': age, 'gender': gender, 'level': level, "bmi": bmi})
     
-    return jsonify({'check': 'False','name': "" ,'age': "", 'gender': "", 'level': "", "bmi": ""})
+    return jsonify({'check': 'False', 'id': "", 'name': "" ,'age': "", 'gender': "", 'level': "", "bmi": ""})
 
 @app.route('/put2DB', methods=['POST'])
 def putDB():
@@ -95,9 +95,9 @@ def putDB():
 
     face_embed = img_to_encoding(image_array)
 
-    save_face_data(face_embed, {"name": name, "gender": str(gender), "age": str(age), "height": str(height), "weight": str(weight), "level": str(level), "bmi": bmi})
+    id = save_face_data(face_embed, {"id": 0, "name": name, "gender": str(gender), "age": str(age), "height": str(height), "weight": str(weight), "level": str(level), "bmi": bmi})
 
-    return jsonify({'check': 'True', 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, 'bmi': bmi})
+    return jsonify({'check': 'True', "id": id, 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, 'bmi': bmi})
 
 @app.route('/get_exercise_1', methods=['POST'])
 def Get_EX_1():
@@ -124,6 +124,13 @@ def Get_EX_1():
         return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
     return jsonify({'check': 'False', 'db_weights': "", 'rest': "", 'sets': "", 'reps': ""})
 
+@app.route('/update_inf', methods=['POST'])
+def Update():
+    data = request.get_json()
+    exercise = data.get('exercise_db')
+    form = data.get('form_db')
+
+    
 @app.route('/get_exercise_2', methods=['POST'])
 def Get_EX_2():
     data = request.get_json()

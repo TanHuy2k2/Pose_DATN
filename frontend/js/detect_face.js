@@ -38,6 +38,7 @@ worker.onmessage = function(e) {
     if (type === 'checkFaceResult') {
         if (result['check'] === 'True') {
             // Redirect after successful face check
+            document.cookie = "id=" + result['id'];
             document.cookie = "name=" + result['name'];
             document.cookie = "age=" + result['age'];
             document.cookie = "gender=" + result['gender'];
@@ -58,6 +59,7 @@ worker.onmessage = function(e) {
     if (type === 'put2DBResult') {
         if (result['check'] === 'True') {
             // Redirect after successfully saving to DB
+            document.cookie = "id=" + result['id'];
             document.cookie = "name=" + result['name'];
             document.cookie = "age=" + result['age'];
             document.cookie = "gender=" + result['gender'];
@@ -157,8 +159,6 @@ async function predictAndStore(tensorImage) {
 
             video.style.display = 'none';
             toggleButton.style.display = 'none';
-
-
 
             // Mark the face as processed and stop the camera
             check = true;

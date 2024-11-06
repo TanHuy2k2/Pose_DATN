@@ -24,10 +24,20 @@ const exercise_box = document.getElementById('exercise-box');
 const exercise_name = document.getElementById('exercise-name');
 const dumbbell = document.getElementById('dumbbell');
 
+let id;
+
 let shoulder = [0,0], elbow = [0,0], wrist = [0,0], hip = [0,0], knee = [0,0], ankle = [0,0];
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
-let exercise = ["DUMBBELL CURL", "SQUAT", "PUSH UP", "complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["DUMBBELL CURL", "form", "SQUAT", "form", "PUSH UP", "form", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true;
+
+const slider = document.getElementById('slider1');
+const sliderValue = document.getElementById('sliderValue');
+const check_form = document.getElementById('check-form');
+
+slider.oninput = function() {
+    sliderValue.textContent = this.value;
+};
 
 function click_form() {
     if (form.style.display === "none" || form.style.display === "") {
@@ -50,13 +60,6 @@ function showNotification(message) {
       notification.style.display = "none";
     }, 3000);
 }
-
-const slider = document.getElementById('slider1');
-const sliderValue = document.getElementById('sliderValue');
-
-slider.oninput = function() {
-    sliderValue.textContent = this.value;
-};
   
 function speakText(text) {
     // Check if the browser supports speech synthesis
@@ -130,6 +133,7 @@ function getCookies() {
         const [key, value] = cookie.trim().split('=');
         cookieObj[key] = value;
     });
+    id = cookieObj['id'];
     input_name.value = cookieObj['name']
     input_age.value = cookieObj['age'];
     input_gender.value = cookieObj['gender'];
@@ -173,7 +177,7 @@ function countdown(restTime) {
 }
 
 function draw_Canvas(results){
-    // canvasCtx.save();
+    canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     canvasCtx.drawImage(results.image, 0, 0,
@@ -209,6 +213,7 @@ function onResults(results) {
         }else if(exercise[next_ex] == "PUSH UP"){    
             dumbbell.style.display = "none";
             if (box_ex){
+                exercise_box.style.display = "flex";
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
                 showNotification("Next exercise is PUSH UP!!!");
@@ -224,6 +229,7 @@ function onResults(results) {
         }else if(exercise[next_ex] == "SQUAT"){
             dumbbell.style.display = "none";
             if (box_ex){
+                exercise_box.style.display = "flex";
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_3',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 showNotification("Next exercise is SQUAT!!!");
@@ -235,6 +241,9 @@ function onResults(results) {
             }
             draw_Canvas(results);
             squat(landmarks[11], landmarks[12], landmarks[23], landmarks[24], landmarks[25], landmarks[26], landmarks[27], landmarks[28]);
+        }else if(exercise[next_ex] == "form"){
+            check_form.style.display = "flex";
+            exercise_box.style.display = "none";
         }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
             showNotification("You're complete!!!");
@@ -245,6 +254,36 @@ function onResults(results) {
 
     canvasCtx.restore();
 }
+
+check_form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const diffValue = document.getElementById("option2").value;
+
+    const slider = parseInt(sliderValue.value);
+
+    if (0 < slider < 3){
+        const fatigueValue = "Very Light";
+    }else if (3 <= slider < 5){
+        const fatigueValue = "Light";
+    }else if (5 <= slider < 7){
+        const fatigueValue = "Moderate ";
+    }else if (7 <= slider < 9){
+        const fatigueValue = "Quite Tired";
+    }else if (slider == 9){
+        const fatigueValue = "Very Tired";
+    }else if (slider == 10){
+        const fatigueValue = "Extremely Tired";
+    }
+
+    const form_DB = fatigueValue+"-"+diffValue;
+
+    exercise[next_ex - 1]
+
+    worker.postMessage({ type: 'update_inf',  exercise_db: exercise[next_ex - 1], form_db: form_DB});
+
+    next_ex += 1;
+})
 
 function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 

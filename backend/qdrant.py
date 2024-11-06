@@ -1,9 +1,8 @@
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
-from qdrant_client.models import VectorParams, Distance  # type: ignore
+from qdrant_client.models import VectorParams, Distance, PointStruct
 import os
 import numpy as np
-import cv2
 
 load_dotenv("../backend/weights/.env")
 
@@ -22,7 +21,7 @@ collection = qclient.recreate_collection(
     )
 )
 # Verify
-def verify(embedding, lower_threshold=0.3, upper_threshold=0.7, limit=1, count_id = 0):
+def verify(embedding, lower_threshold=0.3, upper_threshold=0.7, limit=1):
     try:
         # Perform search
         result = qclient.search(
@@ -34,7 +33,7 @@ def verify(embedding, lower_threshold=0.3, upper_threshold=0.7, limit=1, count_i
         )[0].score
         if not result:
             print("No results found.")
-            save_face_data(np.random.rand(128), count_id, {"type": "dummy"})
+            save_face_data(np.random.rand(128), {"type": "dummy"})
             return False
         if result < lower_threshold:
             print(f"Result is not human enough: {result}")
@@ -55,6 +54,7 @@ def load_face_data(query_vector):
     if not search_result:
         return None
     else:
+        id = "Point " + str(search_result["id"])
         name_label = search_result["name"]
         gender_label = search_result["gender"]
         age_label = search_result["age"]
@@ -62,7 +62,7 @@ def load_face_data(query_vector):
         # weight_label = search_result["weight"]
         level_label = search_result["level"]
         bmi_label = search_result["bmi"]
-        return name_label, gender_label, age_label, level_label, bmi_label
+        return id, name_label, gender_label, age_label, level_label, bmi_label
     
 # Put to DB
 def save_face_data(vector, payload):
@@ -77,6 +77,8 @@ def save_face_data(vector, payload):
     else:
         count_id = last_id + 1
 
+    payload['id'] = count_id
+
     record = models.Record(
         id = count_id,
         payload=payload,
@@ -85,6 +87,27 @@ def save_face_data(vector, payload):
     qclient.upload_records(
         collection_name=collection_name,
         records=[record]
+    )
+
+    return "Point "+str(count_id)
+
+def update_db(point_id, payload):
+    existing_point = qclient.retrieve(
+        collection_name=collection_name,
+        ids=[point_id]
+    )
+
+    updated_payload = {**existing_point[0].payload, **payload}
+
+    qclient.upsert(
+        collection_name=collection_name,
+        points=[
+            PointStruct(
+                id=point_id,
+                vector=existing_point[0].vector,
+                payload=updated_payload      
+            )
+        ]
     )
 
 
