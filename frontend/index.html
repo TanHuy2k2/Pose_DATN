@@ -59,6 +59,24 @@
       <video id="camera" class="input_video" playsinline></video>
       <div id="mini-container">
         <canvas class="output_canvas"></canvas>
+
+        <form id="center-form" class="center-form">
+          <div class="form-row">
+            <label for="option1">Fatigue level</label>
+            <input type="range" id="slider1" min="1" max="10" value="5">
+            <span id="sliderValue">5</span>
+          </div>
+          <div class="form-row">
+            <label for="option2">Difficulty level</label>
+            <select id="option2">
+              <option value="Easy">Easy</option>
+              <option value="Normal">Normal</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+
         <video id="video_check" autoplay loop muted>
           <source src="video/BicepsCurl.mp4" type="video/mp4" id="source">
         </video>

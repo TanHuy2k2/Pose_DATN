@@ -26,11 +26,10 @@ const dumbbell = document.getElementById('dumbbell');
 
 let shoulder = [0,0], elbow = [0,0], wrist = [0,0], hip = [0,0], knee = [0,0], ankle = [0,0];
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
-let exercise = ["DUMBBELL CURL", "PUSH UP", "SQUAT", "complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["DUMBBELL CURL", "SQUAT", "PUSH UP", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true;
 
 function click_form() {
-
     if (form.style.display === "none" || form.style.display === "") {
       form.style.display = "block";
       icon.classList.remove("fa-bars");
@@ -51,6 +50,13 @@ function showNotification(message) {
       notification.style.display = "none";
     }, 3000);
 }
+
+const slider = document.getElementById('slider1');
+const sliderValue = document.getElementById('sliderValue');
+
+slider.oninput = function() {
+    sliderValue.textContent = this.value;
+};
   
 function speakText(text) {
     // Check if the browser supports speech synthesis
@@ -167,7 +173,7 @@ function countdown(restTime) {
 }
 
 function draw_Canvas(results){
-    canvasCtx.save();
+    // canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     canvasCtx.drawImage(results.image, 0, 0,
@@ -228,6 +234,7 @@ function onResults(results) {
                 check_count = false;
             }
             draw_Canvas(results);
+            squat(landmarks[11], landmarks[12], landmarks[23], landmarks[24], landmarks[25], landmarks[26], landmarks[27], landmarks[28]);
         }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
             showNotification("You're complete!!!");
@@ -322,13 +329,13 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     const angle_hip = calculate_angle(shoulder, hip, knee); 
     const angle_knee = calculate_angle(hip, knee, ankle); 
 
-    if (angle_elbow > 160 && (160 < angle_hip, angle_knee < 180) && !check_reps && !check_sets){
+    if (angle_elbow > 160 && (160 < angle_hip, angle_knee <= 180) && !check_reps && !check_sets){
         console.log("elbow: ", angle_elbow);
         console.log("hip: ", angle_hip);
         console.log("knee: ", angle_knee);
         check_reps = true;
     }
-    if (angle_elbow < 90 && check_reps){
+    if (angle_elbow < 90 && (160 < angle_hip, angle_knee <= 180) && check_reps){
         console.log("*****************************");
         console.log("elbow: ", angle_elbow);
         console.log("hip: ", angle_hip);
@@ -370,8 +377,67 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
 }
 
-function squat(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
+function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
+    if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8) && (lm_23.visibility > 0.8)  
+        && (lm_25.visibility > 0.8) && (lm_27.visibility > 0.8)){
+        shoulder = [lm_11.x, lm_11.y];
+        hip = [lm_23.x, lm_23.y];
+        knee = [lm_25.x, lm_25.y];
+        ankle = [lm_27.x, lm_27.y];
+    }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8) && (lm_24.visibility > 0.8) 
+        && (lm_26.visibility > 0.8) && (lm_28.visibility > 0.8)){
+        shoulder = [lm_12.x, lm_12.y];
+        hip = [lm_24.x, lm_24.y];
+        knee = [lm_26.x, lm_26.y];
+        ankle = [lm_28.x, lm_28.y];
+    }   
 
+    const angle_hip = calculate_angle(shoulder, hip, knee); 
+    const angle_knee = calculate_angle(hip, knee, ankle); 
+
+    if ((160 < angle_hip, angle_knee <= 180) && !check_reps && !check_sets){
+        console.log("hip: ", angle_hip);
+        console.log("knee: ", angle_knee);
+        check_reps = true;
+    }
+    if ((angle_hip, angle_knee < 70) && check_reps){
+        console.log("*****************************");
+        console.log("hip: ", angle_hip);
+        console.log("knee: ", angle_knee);
+        check_reps = true;
+        check_reps = false;
+        count_reps -= 1;
+    }
+
+    if (count_reps == 0 && set_ex){
+        speakText("Rest time!!!");
+        sets -= 1
+        hasSpoken = false;
+        count_reps = reps;
+        check_sets = true;
+        check_count = true;
+    }
+
+    if (sets == 0){
+        count_reps = 0;
+        set_ex = false;
+    }else if (sets < 0){
+        check_sets = false;
+        box_ex = true;
+        check_count = false;
+        next_ex += 1;
+    }
+
+    if (check_count){
+        countdown(rest);
+    }
+
+    set_exercise(0, sets, count_reps, count_rest);
+
+    canvasCtx.font = '18px Arial';
+    canvasCtx.fillStyle = '#00FF00';
+    canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
+    canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
 }
     
 const pose = new Pose({locateFile: (file) => {
