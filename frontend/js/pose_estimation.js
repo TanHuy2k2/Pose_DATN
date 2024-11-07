@@ -28,8 +28,8 @@ let id;
 
 let shoulder = [0,0], elbow = [0,0], wrist = [0,0], hip = [0,0], knee = [0,0], ankle = [0,0];
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
-let exercise = ["DUMBBELL CURL", "form", "SQUAT", "form", "PUSH UP", "form", "complete"], next_ex = 0, hasSpoken = false;
-let box_ex = true;
+let exercise = ["DUMBBELL CURL", "form", "PUSH UP", "form", "SQUAT", "form", "complete"], next_ex = 0, hasSpoken = false;
+let box_ex = true, form_submit = false;
 
 const slider = document.getElementById('slider1');
 const sliderValue = document.getElementById('sliderValue');
@@ -118,6 +118,8 @@ worker.onmessage = function(e) {
         if (result['check'] === 'True') {
             console.log("----------------True------------");
             next_ex += 1;
+            check_form.style.display = "none";
+            form_submit = false
         }
     }
 }
@@ -249,6 +251,10 @@ function onResults(results) {
         }else if(exercise[next_ex] == "form"){
             check_form.style.display = "flex";
             exercise_box.style.display = "none";
+            check_reps = false; 
+            check_sets = true;
+            hasSpoken = false;
+            check_count = false;
         }else if(exercise[next_ex] == "complete"){
             speakText("You're done!!!");
             showNotification("You're complete!!!");
@@ -263,28 +269,30 @@ function onResults(results) {
 check_form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const diffValue = document.getElementById("option2").value;
+    if (form_submit){
+        const diffValue = document.getElementById("option2").value;
 
-    const slider = parseInt(sliderValue.value);
-    let fatigueValue;
-
-    if (slider >= 1 && slider < 3) {
-        fatigueValue = "Very Light";
-      } else if (slider >= 3 && slider < 5) {
-        fatigueValue = "Light";
-      } else if (slider >= 5 && slider < 7) {
-        fatigueValue = "Moderate";
-      } else if (slider >= 7 && slider < 9) {
-        fatigueValue = "Quite Tired";
-      } else if (slider == 9) {
-        fatigueValue = "Very Tired";
-      } else if (slider == 10) {
-        fatigueValue = "Extremely Tired";
-      }
-
-    const form_DB = fatigueValue+"-"+diffValue;
-
-    worker.postMessage({ type: 'update_inf', point_id: id, exercise_db: exercise[next_ex - 1], form_db: form_DB});
+        const slider = parseInt(sliderValue.textContent);
+        let fatigueValue;
+    
+        if (slider >= 1 && slider < 3) {
+            fatigueValue = "Very Light";
+          } else if (slider >= 3 && slider < 5) {
+            fatigueValue = "Light";
+          } else if (slider >= 5 && slider < 7) {
+            fatigueValue = "Moderate";
+          } else if (slider >= 7 && slider < 9) {
+            fatigueValue = "Quite Tired";
+          } else if (slider == 9) {
+            fatigueValue = "Very Tired";
+          } else if (slider == 10) {
+            fatigueValue = "Extremely Tired";
+          }
+    
+        const form_DB = fatigueValue + "-" + diffValue;
+    
+        worker.postMessage({ type: 'update_inf', point_id: id, exercise_db: exercise[next_ex - 1], form_db: form_DB});
+    }
 })
 
 function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
@@ -329,6 +337,7 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
         check_sets = false;
         box_ex = true;
         check_count = false;
+        form_submit = true;
         next_ex += 1;
         source.src = "video/pushup.mp4";
         source.load();
@@ -370,13 +379,13 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     const angle_hip = calculate_angle(shoulder, hip, knee); 
     const angle_knee = calculate_angle(hip, knee, ankle); 
 
-    if (angle_elbow > 160 && (160 < angle_hip, angle_knee && angle_hip, angle_knee <= 180) && !check_reps && !check_sets){
+    if (angle_elbow > 160 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
         console.log("elbow: ", angle_elbow);
         console.log("hip: ", angle_hip);
         console.log("knee: ", angle_knee);
         check_reps = true;
     }
-    if (angle_elbow < 90 && (160 < angle_hip, angle_knee && angle_hip, angle_knee <= 180) && check_reps){
+    if (angle_elbow < 90 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && check_reps){
         console.log("*****************************");
         console.log("elbow: ", angle_elbow);
         console.log("hip: ", angle_hip);
@@ -402,6 +411,7 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
         check_sets = false;
         box_ex = true;
         check_count = false;
+        form_submit = true;
         next_ex += 1;
         source.src = "video/squat.mp4";
         source.load();
@@ -438,12 +448,12 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
     const angle_hip = calculate_angle(shoulder, hip, knee); 
     const angle_knee = calculate_angle(hip, knee, ankle); 
 
-    if ((160 < angle_hip, angle_knee && angle_hip, angle_knee <= 180) && !check_reps && !check_sets){
+    if ((160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
         console.log("hip: ", angle_hip);
         console.log("knee: ", angle_knee);
         check_reps = true;
     }
-    if ((angle_hip, angle_knee < 70) && check_reps){
+    if ((angle_hip < 70 && angle_knee < 70) && check_reps){
         console.log("*****************************");
         console.log("hip: ", angle_hip);
         console.log("knee: ", angle_knee);
@@ -468,6 +478,7 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
         check_sets = false;
         box_ex = true;
         check_count = false;
+        form_submit = true;
         next_ex += 1;
     }
 
