@@ -3,83 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notification Example</title>
+  <title>Test</title>
   <style>
-    /* Basic reset */
-    * {
-      box-sizing: border-box;
+    body, html {
       margin: 0;
       padding: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .check-form {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent */
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
-    body {
-      font-family: Arial, sans-serif;
+    .check-form .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .check-form label {
+      font-weight: bold;
+      margin-right: 10px;
+      margin-bottom: 5px;
+    }
+    .form-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f2f5;
+      gap: 10px; /* Adds space between elements */
     }
-
-    #notification-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
-
-    .notification {
-      background-color: #4caf50;
-      color: #fff;
-      padding: 15px 20px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      transform: translateX(100%);
-      animation: slideIn 0.5s forwards, fadeOut 0.5s ease-out 4.5s forwards;
-    }
-
-    /* Slide-in animation */
-    @keyframes slideIn {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    /* Fade-out animation */
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        transform: translateX(100%);
-      }
-    }
-
   </style>
 </head>
 <body>
-  <div id="notification-container"></div>
-  <button onclick="showNotification('This is a test notification!')">Show Notification</button>
+  <form id="check-form" class="check-form">
+    <div class="form-row">
+      <label for="option1">Fatigue level</label>
+      <input type="range" id="slider1" min="1" max="10" value="5">
+      <span id="sliderValue">5</span>
+    </div>
+    <div class="form-row">
+      <label for="option2">Difficulty level</label>
+      <select id="option2">
+        <option value="Easy">Easy</option>
+        <option value="Normal">Normal</option>
+        <option value="Hard">Hard</option>
+      </select>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
 
   <script>
-    function showNotification(message) {
-      const notificationContainer = document.getElementById("notification-container");
+    const slider = document.getElementById('slider1');
+    const sliderValue = document.getElementById('sliderValue');
+    const check_form = document.getElementById('check-form');
 
-      // Create the notification element
-      const notification = document.createElement("div");
-      notification.classList.add("notification");
-      notification.textContent = message;
+    slider.oninput = function() {
+      sliderValue.textContent = this.value;
+    };
 
-      // Append notification to the container
-      notificationContainer.appendChild(notification);
+    check_form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-      // Remove the notification after 5 seconds
-      setTimeout(() => {
-        notification.remove();
-      }, 5000);
-    }
+      const diffValue = document.getElementById("option2").value;
+      const slider = parseInt(sliderValue.textContent);
+      let fatigueValue;
 
+      if (slider >= 1 && slider < 3) {
+        fatigueValue = "Very Light";
+      } else if (slider >= 3 && slider < 5) {
+        fatigueValue = "Light";
+      } else if (slider >= 5 && slider < 7) {
+        fatigueValue = "Moderate";
+      } else if (slider >= 7 && slider < 9) {
+        fatigueValue = "Quite Tired";
+      } else if (slider == 9) {
+        fatigueValue = "Very Tired";
+      } else if (slider == 10) {
+        fatigueValue = "Extremely Tired";
+      }
+
+      const form_DB = fatigueValue + "-" + diffValue;
+
+      console.log(form_DB);
+    });
   </script>
 </body>
 </html>

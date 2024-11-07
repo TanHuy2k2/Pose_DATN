@@ -54,7 +54,7 @@ def load_face_data(query_vector):
     if not search_result:
         return None
     else:
-        id = "Point " + str(search_result["id"])
+        id = search_result["id"]
         name_label = search_result["name"]
         gender_label = search_result["gender"]
         age_label = search_result["age"]
@@ -89,12 +89,14 @@ def save_face_data(vector, payload):
         records=[record]
     )
 
-    return "Point "+str(count_id)
+    return count_id
 
 def update_db(point_id, payload):
+
     existing_point = qclient.retrieve(
         collection_name=collection_name,
-        ids=[point_id]
+        ids = [int(point_id)],
+        with_vectors=True
     )
 
     updated_payload = {**existing_point[0].payload, **payload}
@@ -103,7 +105,7 @@ def update_db(point_id, payload):
         collection_name=collection_name,
         points=[
             PointStruct(
-                id=point_id,
+                id=int(point_id),
                 vector=existing_point[0].vector,
                 payload=updated_payload      
             )

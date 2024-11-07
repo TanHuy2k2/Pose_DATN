@@ -1,7 +1,8 @@
 let bmi;
 // Listen for messages from the main thread
 onmessage = async function(e) {
-    const { type, name_db, gender_db, age_db, height_db, weight_db, level_db, image64, bmi_label, exercise_db, form_db } = e.data;
+    const { type, name_db, gender_db, age_db, height_db, weight_db, level_db, 
+        image64, bmi_label, point_id, exercise_db, form_db } = e.data;
 
     if (type === 'checkFace') {
         // Perform face check
@@ -53,11 +54,11 @@ onmessage = async function(e) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ exercise_db, form_db})
+            body: JSON.stringify({ point_id, exercise_db, form_db})
         });
 
         const result = await response.json();
-        postMessage({ type: 'getEX_1', result });
+        postMessage({ type: 'update', result });
 
     }else if (type === "get_exercise_1"){
         // Save data to database

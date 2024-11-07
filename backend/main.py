@@ -5,7 +5,7 @@ import io
 import numpy as np
 import base64
 from deepface import DeepFace
-from qdrant import verify, load_face_data, save_face_data
+from qdrant import verify, load_face_data, save_face_data, update_db
 from Access_sheet import get_sheet1_info, get_sheet2_info, get_sheet3_info
 from flask_cors import CORS
 
@@ -99,6 +99,19 @@ def putDB():
 
     return jsonify({'check': 'True', "id": id, 'name': name, 'age': age, 'gender': gender, 'height': height, 'weight': weight, 'level': level, 'bmi': bmi})
 
+@app.route('/update_inf', methods=['POST'])
+def Update():
+    data = request.get_json()
+    point_id = data.get('point_id')
+    exercise = data.get('exercise_db')
+    form = data.get('form_db')
+
+    data = {exercise: form}
+
+    update_db(point_id, data)
+
+    return jsonify({'check': 'True'})
+
 @app.route('/get_exercise_1', methods=['POST'])
 def Get_EX_1():
     data = request.get_json()
@@ -123,13 +136,6 @@ def Get_EX_1():
     if result:
         return jsonify({'check': 'True', 'db_weights': str(result['db_weights']), 'rest': str(result['rest']), 'sets': str(result['sets']), 'reps': str(result['reps'])})
     return jsonify({'check': 'False', 'db_weights': "", 'rest': "", 'sets': "", 'reps': ""})
-
-@app.route('/update_inf', methods=['POST'])
-def Update():
-    data = request.get_json()
-    exercise = data.get('exercise_db')
-    form = data.get('form_db')
-
     
 @app.route('/get_exercise_2', methods=['POST'])
 def Get_EX_2():
