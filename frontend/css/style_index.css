@@ -52,6 +52,7 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -228,25 +229,39 @@ body, html {
   animation: slideIn 0.5s forwards, fadeOut 0.5s ease-out 4.5s forwards;
 }
 
+@media (max-width: 1200px) {
+  .topnav {
+    top: 50px;
+  }
+  .main-container{
+    margin-right: 0;
+  }
+  .exercise-box span {
+    font-size: 17px;
+    font-weight: normal;
+    font-family: sans-serif;
+  }
+}
 
-/* Media query for smaller screens */
+@media (max-width: 1000px) {
+  .topnav {
+    top: 10px;
+  }
+  #container {
+    display: block;
+  }
+  .exercise-box{
+    margin: 0;
+  }
+  #camera{
+    height: 95%;
+  }
+  #mini-container {
+    display: flex;
+    align-items: center; /* Center camera and canvas */
+    justify-content: center;
+  }
+}
 @media (max-width: 768px) {
-  .main-container {
-    flex-direction: column; /* Stack elements vertically on smaller screens */
-    margin-right: 0; /* Remove negative margin */
-  }
 
-  .form-container {
-    position: relative; /* Change position for better layout on small screens */
-    left: auto;
-    margin: 0 auto; /* Center form on small screens */
-  }
-
-  .exercise-box {
-    width: 95%; /* Increase width for smaller screens */
-  }
-
-  #camera, #video_check, .output_canvas {
-    width: 100%; /* Make all elements take full width on smaller screens */
-  }
 }

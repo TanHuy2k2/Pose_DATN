@@ -48,7 +48,6 @@ worker.onmessage = function(e) {
             check = true
         } else {
             if (face) {
-                // Collect prediction results
                 check = false
                 const tensorImage = tf.browser.fromPixels(face);
                 predictAndStore(tensorImage);

@@ -6,6 +6,8 @@ import numpy as np
 
 load_dotenv("../backend/weights/.env")
 
+level_up = {"Beginner": "Normal", "Normal": "Advanced"}
+
 qclient = QdrantClient(
     url=os.getenv("QDRANT_DB_URL"),
     api_key=os.getenv("QDRANT_API_KEY")
@@ -99,7 +101,15 @@ def update_db(point_id, payload):
         with_vectors=True
     )
 
-    updated_payload = {**existing_point[0].payload, **payload}
+    check_payload = existing_point[0].payload
+
+    key = [key for key in payload.keys()]
+
+    if key[0] in check_payload:
+        if check_payload[key[0]] == payload[key[0]]:
+            check_payload[key[0]] = level_up[existing_point['level']]
+
+    updated_payload = {**check_payload, **payload}
 
     qclient.upsert(
         collection_name=collection_name,

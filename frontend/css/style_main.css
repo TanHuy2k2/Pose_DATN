@@ -219,6 +219,9 @@ html {
         margin-top: 10px;
         margin-left: 10px;
     }
+    .form_container{
+        margin-bottom: -150px !important;
+    }
 
     .form_container input[type="text"] {
         width: 90%;
@@ -285,5 +288,36 @@ html {
     .output_canvas {
         max-width: 98%; /* Full width for smaller screens */
         max-height: 440px; /* Maintain aspect ratio */
+    }
+}
+@media (max-width: 285px) {
+    .form_container {
+        width: 95%; /* Full width for mobile */
+    }
+
+    .form_container input[type="text"],
+
+    .form_container button {
+        font-size: 13px; /* Smaller font size for mobile */
+    }
+    .title-card {
+        width: 85%;
+    }
+
+    .title-card h1 {
+        font-size: 1em; /* Smaller heading size */
+    }
+    .output_canvas {
+        max-width: 95%; /* Full width for smaller screens */
+        max-height: 350px; /* Maintain aspect ratio */
+    }
+}
+@media (max-height: 650px){
+    .output_canvas {
+        max-width: 95%; /* Full width for smaller screens */
+        max-height: 450px; /* Maintain aspect ratio */
+    }
+    #toggleButton{
+        margin-top: 5px;
     }
 }
