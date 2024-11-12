@@ -28,7 +28,7 @@ let id;
 
 let shoulder = [0,0], elbow = [0,0], wrist = [0,0], hip = [0,0], knee = [0,0], ankle = [0,0];
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
-let exercise = ["DUMBBELL CURL", "form", "PUSH UP", "form", "SQUAT", "form", "complete"], next_ex = 0, hasSpoken = false;
+let exercise = ["DUMBBELL CURL", "PUSH UP", "SQUAT", "form", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true, form_submit = false;
 
 const slider = document.getElementById('slider1');
