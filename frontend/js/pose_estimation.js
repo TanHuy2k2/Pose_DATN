@@ -35,6 +35,39 @@ const slider = document.getElementById('slider1');
 const sliderValue = document.getElementById('sliderValue');
 const check_form = document.getElementById('check-form');
 
+
+function setCookieWithDate(name, value, hour) {
+    const date = new Date();
+    date.setTime(date.getTime() + (hour * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    const creationDate = new Date().toISOString();
+    document.cookie = name + "=" + value + "|" + creationDate + ";" + expires;
+}
+
+function getCookieTime(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i];
+        while (c.charAt(0) === ' ') c = c.substring(1);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function isCookieExpired(name, hour) {
+    const cookie = getCookieTime(name);
+    if (!cookie) return true; // If cookie does not exist, consider it expired
+
+    const [value, creationDate] = cookie.split('|');
+    const creationTime = new Date(creationDate).getTime();
+    const currentTime = new Date().getTime();
+
+    // Check if 7 days (in milliseconds) have passed
+    const timeRL = hour * 60 * 60 * 1000;
+    return currentTime - creationTime >= timeRL;
+}
+
 slider.oninput = function() {
     sliderValue.textContent = this.value;
 };
@@ -119,7 +152,9 @@ worker.onmessage = function(e) {
             console.log("----------------True------------");
             next_ex += 1;
             check_form.style.display = "none";
-            form_submit = false
+            form_submit = false;
+
+            setCookieWithDate("time", "true", 24);
         }
     }
 }
@@ -202,6 +237,10 @@ function onResults(results) {
 
     if (!results.poseLandmarks) {
         return;
+    }
+
+    if (!isCookieExpired("time", 24)) {
+        exercise = exercise.filter(item => item !== "form");
     }
 
     const landmarks = results.poseLandmarks;

@@ -8,6 +8,8 @@ load_dotenv("../backend/weights/.env")
 
 level_up = {"Beginner": "Normal", "Normal": "Advanced", "Advanced": "Advanced"}
 
+level_down = {"Advanced": "Normal", "Normal": "Beginner", "Beginner": "Beginner"}
+
 dic_fatigue = {"Very Light": 0, "Light": 1, "Moderate": 2, "Quite Tired": 3, "Very Tired": 4, "Extremely Tired": 5}
 dic_diff = {"Easy": 0, "Normal": 1, "Hard": 2}
 
@@ -114,8 +116,11 @@ def update_db(point_id, payload):
         fatigue_ep, diff_ep =  check_payload[key[0]].split("-")
 
         if (dic_fatigue[fatigue_pl] < dic_fatigue[fatigue_ep] and dic_diff[diff_pl] <= dic_diff[diff_ep]) or (dic_diff[diff_pl] < dic_diff[diff_ep] and dic_fatigue[fatigue_pl] <= dic_fatigue[fatigue_ep]):
-          print("-----True-----")
-          check_payload['level'] = level_up[check_payload['level']]
+            print("-----True-----")
+            check_payload['level'] = level_up[check_payload['level']]
+        elif (dic_fatigue[fatigue_pl] > dic_fatigue[fatigue_ep] and dic_diff[diff_pl] >= dic_diff[diff_ep]) or (dic_diff[diff_pl] > dic_diff[diff_ep] and dic_fatigue[fatigue_pl] >= dic_fatigue[fatigue_ep]):
+            print("-----True-----")
+            check_payload['level'] = level_down[check_payload['level']]
 
     updated_payload = {**check_payload, **payload}
 
