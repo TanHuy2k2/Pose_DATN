@@ -102,8 +102,9 @@ function speakText(text) {
       // Optional: Set voice, pitch, rate, etc.
       speech.lang = 'en-US';
       speech.pitch = 1;  // Range between 0 and 2
-      speech.rate = 1.5;   // Range between 0.1 and 10
+      speech.rate = 1.5;   // Range between 0.1 and 2
       speech.volume = 1; // Range between 0 and 1
+      speech.voice = "Microsoft Mark - English (United States)"
 
       // Speak the text
       window.speechSynthesis.speak(speech);
@@ -184,7 +185,7 @@ function getCookies() {
     input_bmi.value = cookieObj['bmi'];
     input_level.value = cookieObj['level'];
 
-    speakText("Okay let's start!!!");
+    speakText("Okay, let's start!!!");
 }
 
 function calculate_angle(a, b, c){
@@ -254,8 +255,9 @@ function onResults(results) {
                 exercise_box.style.display = "flex";
                 worker.postMessage({ type: 'get_exercise_1',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 showNotification("Exercise is DUMBBELL CURL!!!");
-                speakText('Exercise is DUMBBELL CURL!!!');
+                speakText('Get ready! Your exercise is Dumbbell Curl!');
                 box_ex = false;
+                speakText("Please! Straighthen your hand.");
             }
             draw_Canvas(results);
             dumbbell_curl(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16]);
@@ -266,12 +268,13 @@ function onResults(results) {
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
                 showNotification("Next exercise is PUSH UP!!!");
-                speakText("Exercise is PUSH UP!!!");
+                speakText("Get ready! Your next exercise is Push-Up!");
                 box_ex = false;
                 check_reps = false; 
                 check_sets = false;
                 hasSpoken = false;
                 check_count = false;
+                speakText('Place your hands wider than shoulder-width, body straight.');
             }
             draw_Canvas(results);
             push_up(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16],
@@ -283,25 +286,26 @@ function onResults(results) {
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_3',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 showNotification("Next exercise is SQUAT!!!");
-                speakText("Exercise is SQUAT!!!");
+                speakText("Get ready! Your next exercise is Squat!");
                 box_ex = false;
                 check_reps = false; 
                 check_sets = false;
                 hasSpoken = false;
                 check_count = false;
+                speakText('Stand straight, feet shoulder-width apart, arms extended in front.');
             }
             draw_Canvas(results);
             squat(landmarks[11], landmarks[12], landmarks[23], landmarks[24], landmarks[25], landmarks[26], landmarks[27], landmarks[28]);
         }else if(exercise[next_ex] == "form"){
             check_form.style.display = "flex";
             exercise_box.style.display = "none";
-            speakText("Please, complete the comment form!");
+            speakText("Enter your feedback on the exercise support system.");
             check_reps = false; 
             check_sets = true;
             hasSpoken = false;
             check_count = false;
         }else if(exercise[next_ex] == "complete"){
-            speakText("You're done!!!. Thank you.");
+            speakText("Thank you for filling out the form! We appreciate your feedback and will use it to improve your experience with our exercises.");
             showNotification("You're complete!!!");
             location.href = 'http://localhost:3000/frontend/main.html';
         }
@@ -356,20 +360,20 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 
     if (angle > 155 && !check_reps && !check_sets){
         check_reps = true;
-        speakText("Lower the weights!!!");
+        speakText("Raise the weights!");
     }
 
     if (angle < 45 && check_reps){
         console.log("angle: ", angle);
         check_reps = false;
         if (Math.abs(shoulder[0] - elbow[0]) <= 0.07){
-            speakText("Raise the weights!!!");
+            speakText("Lower the weights!");
             count_reps -= 1;
         }
     }
 
     if (count_reps == 0 && set_ex){
-        speakText("Rest time!!!");
+        speakText("Rest and prepare for the next repetition!");
         sets -= 1
         hasSpoken = false;
         count_reps = reps;
@@ -428,17 +432,17 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
 
     if (angle_elbow > 160 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
         check_reps = true;
-        speakText("Lower your hands");
+        speakText("Lower your body until elbows form a 90-degree angle.");
     }
     if (angle_elbow < 90 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && check_reps){
         check_reps = true;
         check_reps = false;
         count_reps -= 1;
-        speakText("Raise your hands");
+        speakText("Push up, fully extending your arms.");
     }
 
     if (count_reps == 0 && set_ex){
-        speakText("Rest time!!!");
+        speakText("Rest and prepare for the next rep.!");
         sets -= 1
         hasSpoken = false;
         count_reps = reps;
@@ -492,17 +496,17 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
 
     if ((160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
         check_reps = true;
-        speakText("Lower")
+        speakText("Lower your hips, keeping your back straight!")
     }
     if ((angle_hip < 70 && angle_knee < 70) && check_reps){
         check_reps = true;
         check_reps = false;
         count_reps -= 1;
-        speakText("Raise")
+        speakText("Push up to the starting position, keeping your body upright.")
     }
 
     if (count_reps == 0 && set_ex){
-        speakText("Rest time!!!");
+        speakText("Rest and prepare for the next rep!!");
         sets -= 1
         hasSpoken = false;
         count_reps = reps;
