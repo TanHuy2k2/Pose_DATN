@@ -101,12 +101,14 @@ function speakText(text) {
       
       // Optional: Set voice, pitch, rate, etc.
       speech.lang = 'en-US';
-      speech.pitch = 1.5;  // Range between 0 and 2
-      speech.rate = 0.8;   // Range between 0.1 and 10
+      speech.pitch = 1;  // Range between 0 and 2
+      speech.rate = 1.5;   // Range between 0.1 and 10
       speech.volume = 1; // Range between 0 and 1
 
       // Speak the text
       window.speechSynthesis.speak(speech);
+
+      console.log(text);
     } else {
       alert("Sorry, your browser doesn't support text-to-speech!");
     }
@@ -154,7 +156,7 @@ worker.onmessage = function(e) {
             check_form.style.display = "none";
             form_submit = false;
 
-            setCookieWithDate("time", "true", 24);
+            setCookieWithDate("time", "true", 1/10);
         }
     }
 }
@@ -239,7 +241,7 @@ function onResults(results) {
         return;
     }
 
-    if (!isCookieExpired("time", 24)) {
+    if (!isCookieExpired("time", 1/10)) {
         exercise = exercise.filter(item => item !== "form");
     }
 
@@ -252,6 +254,7 @@ function onResults(results) {
                 exercise_box.style.display = "flex";
                 worker.postMessage({ type: 'get_exercise_1',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 showNotification("Exercise is DUMBBELL CURL!!!");
+                speakText('Exercise is DUMBBELL CURL!!!');
                 box_ex = false;
             }
             draw_Canvas(results);
@@ -263,6 +266,7 @@ function onResults(results) {
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
                 showNotification("Next exercise is PUSH UP!!!");
+                speakText("Exercise is PUSH UP!!!");
                 box_ex = false;
                 check_reps = false; 
                 check_sets = false;
@@ -279,6 +283,7 @@ function onResults(results) {
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_3',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 showNotification("Next exercise is SQUAT!!!");
+                speakText("Exercise is SQUAT!!!");
                 box_ex = false;
                 check_reps = false; 
                 check_sets = false;
@@ -290,12 +295,13 @@ function onResults(results) {
         }else if(exercise[next_ex] == "form"){
             check_form.style.display = "flex";
             exercise_box.style.display = "none";
+            speakText("Please, complete the comment form!");
             check_reps = false; 
             check_sets = true;
             hasSpoken = false;
             check_count = false;
         }else if(exercise[next_ex] == "complete"){
-            speakText("You're done!!!");
+            speakText("You're done!!!. Thank you.");
             showNotification("You're complete!!!");
             location.href = 'http://localhost:3000/frontend/main.html';
         }
@@ -350,12 +356,14 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 
     if (angle > 155 && !check_reps && !check_sets){
         check_reps = true;
+        speakText("Lower the weights!!!");
     }
 
     if (angle < 45 && check_reps){
         console.log("angle: ", angle);
         check_reps = false;
         if (Math.abs(shoulder[0] - elbow[0]) <= 0.07){
+            speakText("Raise the weights!!!");
             count_reps -= 1;
         }
     }
@@ -419,19 +427,14 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     const angle_knee = calculate_angle(hip, knee, ankle); 
 
     if (angle_elbow > 160 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
-        console.log("elbow: ", angle_elbow);
-        console.log("hip: ", angle_hip);
-        console.log("knee: ", angle_knee);
         check_reps = true;
+        speakText("Lower your hands");
     }
     if (angle_elbow < 90 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && check_reps){
-        console.log("*****************************");
-        console.log("elbow: ", angle_elbow);
-        console.log("hip: ", angle_hip);
-        console.log("knee: ", angle_knee);
         check_reps = true;
         check_reps = false;
         count_reps -= 1;
+        speakText("Raise your hands");
     }
 
     if (count_reps == 0 && set_ex){
@@ -488,17 +491,14 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
     const angle_knee = calculate_angle(hip, knee, ankle); 
 
     if ((160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
-        console.log("hip: ", angle_hip);
-        console.log("knee: ", angle_knee);
         check_reps = true;
+        speakText("Lower")
     }
     if ((angle_hip < 70 && angle_knee < 70) && check_reps){
-        console.log("*****************************");
-        console.log("hip: ", angle_hip);
-        console.log("knee: ", angle_knee);
         check_reps = true;
         check_reps = false;
         count_reps -= 1;
+        speakText("Raise")
     }
 
     if (count_reps == 0 && set_ex){
