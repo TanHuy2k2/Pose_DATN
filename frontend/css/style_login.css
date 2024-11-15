@@ -9,17 +9,44 @@ body, html {
 }
 
 html {
-    background: linear-gradient(to right, rgba(21, 0, 255, 0.5), rgba(128, 128, 128, 0.5)), 
-                url('/frontend/images/c.jpg') no-repeat center center fixed;
+    background: url('/frontend/images/hero-bg.jpg');
     background-size: cover; /* Optional: to ensure the image covers the entire background */
 }
 
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 15px 20px;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s, padding 0.3s;
+    z-index: 1000;
+}
+  
+.logo {
+    display: flex;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    width: 100%;
+    justify-content: center;
+}
+  
+.logo span {
+    color: #4A90E2; /* Accent color for 'AI' */
+}
 
 .main-container {
     display: flex;
     justify-content: flex-end; /* Aligns content to the right */
     align-items: flex-start; /* Aligns content to the top */
     gap: 10px; /* Space between the form and video/canvas */
+    margin-top: 50px;
 }
 
 
@@ -140,25 +167,6 @@ html {
     opacity: 0.5; /* Visually indicates disabled state */
     pointer-events: none; /* Prevents interaction */
   }
-
-/* Title card styling */
-.title-card {
-    background: rgba(152, 251, 152, 0.85); /* Mint Green */
-    color: #004d00; /* White text for readability */
-    text-align: center;
-    padding: 15px; /* Reduced padding to decrease height */
-    border-radius: 12px;
-    margin: 20px auto;
-    max-width: 90%; /* Responsive max width */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
-}
-
-/* Title card heading */
-.title-card h1 {
-    margin: 0;
-    font-size: 2em; /* Slightly smaller font size */
-    font-family: 'Arial', sans-serif;
-}
 
 @media (max-width: 1200px) {
     .title-card{

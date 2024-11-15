@@ -307,7 +307,7 @@ function onResults(results) {
         }else if(exercise[next_ex] == "complete"){
             speakText("Thank you for filling out the form! We appreciate your feedback and will use it to improve your experience with our exercises.");
             showNotification("You're complete!!!");
-            location.href = 'http://localhost:3000/frontend/main.html';
+            location.href = 'http://localhost:3000/frontend/login_register.html';
         }
         
     }

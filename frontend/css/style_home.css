@@ -1,0 +1,193 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Lato,sans-serif;
+  color: var(--dark);;
+  background-color: #e1e6ee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Basic Header Styles */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 30px;
+  background-color: #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s, padding 0.3s;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.logo span {
+  color: #4A90E2; /* Accent color for 'AI' */
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+}
+
+.button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.signup {
+  background-color: #4A90E2; /* Sign Up button color */
+  color: #fff;
+}
+
+.signup:hover {
+  background-color: #357ABD; /* Darker shade on hover */
+}
+
+/* Style changes when header is scrolled */
+.header.scrolled {
+  background-color: #111;
+  padding: 10px 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Hero section */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background-image: url('/frontend/images/hero-bg.jpg'); /* Replace with your image if available */
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 30em;
+  color: #fff;
+  margin-top: 76px;
+}
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+.hero p {
+  margin: 0 auto 30px;
+  font-family: Rubik, sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30px;
+  text-shadow: 0 0 20px #000;
+  background-color: #0000;
+  border-radius: 0;
+  width: 70%;
+}
+.hero .apple-signup {
+  display: inline-block;
+  padding: 13px 23px;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #000;
+  font-weight: bold;
+}
+
+/* Testimonial section */
+.testimonial {
+  text-align: center;
+  padding: 120px 20px;
+  color: #333;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  height: 27em;
+}
+.testimonial .stars {
+  font-size: 24px;
+  color: #FFA500; /* Orange for stars */
+}
+.testimonial p {
+  font-family: Rubik, sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 36px;
+  margin: 20px 0;
+}
+.testimonial .highlight {
+  background-color: #FFD580; /* Light orange highlight */
+  padding: 0 5px;
+}
+.footer {
+  width: 100%;
+  padding: 40px 20px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+.footer-logo span {
+  color: #4A90E2; /* Change AI text color */
+}
+
+.footer-links {
+  display: flex;
+  gap: 15px;
+  font-size: 16px;
+}
+
+.footer-links a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.footer-links a:hover {
+  color: #4A90E2;
+}
+
+.footer-social {
+  display: flex;
+  gap: 15px;
+}
+.footer-social a {
+  padding: 15px;
+}
+
+.footer-social a i {
+  transition: opacity 0.3s;
+  color: #fff;
+}
+.footer-social a:hover img {
+  opacity: 0.7;
+}
+
+.footer-bottom {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
