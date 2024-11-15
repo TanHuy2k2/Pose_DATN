@@ -257,7 +257,7 @@ function onResults(results) {
                 showNotification("Exercise is DUMBBELL CURL!!!");
                 speakText('Get ready! Your exercise is Dumbbell Curl!');
                 box_ex = false;
-                speakText("Please! Straighthen your hand.");
+                speakText("Please! Straighten your hand.");
             }
             draw_Canvas(results);
             dumbbell_curl(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16]);
