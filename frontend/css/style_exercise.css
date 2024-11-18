@@ -14,13 +14,6 @@
   cursor: pointer;
 }
 
-/* Background settings */
-html {
-  background: linear-gradient(to right, rgba(21, 0, 255, 0.5), rgba(128, 128, 128, 0.5)),
-              url('/frontend/images/c.jpg') no-repeat center center fixed;
-  background-size: cover; /* Ensures the image covers the entire background */
-}
-
 /* Exercise box */
 .exercise-box {
   display: none;
@@ -49,14 +42,14 @@ html {
 
 /* Body and HTML settings */
 body, html {
-  margin: 0;
-  padding: 0;
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-image: url('/frontend/images/hero-bg.jpg');
+  background-size: cover; /* Ensures the image covers the entire background */
 }
 
 /* Main Container */

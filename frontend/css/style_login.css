@@ -46,7 +46,7 @@ html {
     justify-content: flex-end; /* Aligns content to the right */
     align-items: flex-start; /* Aligns content to the top */
     gap: 10px; /* Space between the form and video/canvas */
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 
@@ -54,7 +54,8 @@ html {
 .form_container {
     width: 100%;
     max-width: 250px;
-    margin-bottom: 30%;
+    margin-bottom: 20%;
+    margin-top: -5px;
     margin-left: 0; /* Align the form on the far left */
     padding: 10px;
     border: 1px solid #ccc;
@@ -183,7 +184,7 @@ html {
     }
 
     .form_container{
-        margin-top: -10px;
+        margin-top: -13px;
         margin-bottom: 50px !important; 
     }
 }

@@ -104,7 +104,6 @@ function speakText(text) {
       speech.pitch = 1;  // Range between 0 and 2
       speech.rate = 1.5;   // Range between 0.1 and 2
       speech.volume = 1; // Range between 0 and 1
-      speech.voice = "Microsoft Mark - English (United States)"
 
       // Speak the text
       window.speechSynthesis.speak(speech);
