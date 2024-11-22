@@ -1,103 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .check-form {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent */
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .check-form .form-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-
-    .check-form label {
-      font-weight: bold;
-      margin-right: 10px;
-      margin-bottom: 5px;
-    }
-    .form-row {
-      display: flex;
-      align-items: center;
-      gap: 10px; /* Adds space between elements */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push-Up Posture Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0-dev.20241028-dd28f09ce2/dist/ort.min.js"></script>
+    <script src="/frontend/js/check_pushup.js"></script>
+    <style>
+        body {
+            display: block;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        video, canvas {
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-  <form id="check-form" class="check-form">
-    <div class="form-row">
-      <label for="option1">Fatigue level</label>
-      <input type="range" id="slider1" min="1" max="10" value="5">
-      <span id="sliderValue">5</span>
-    </div>
-    <div class="form-row">
-      <label for="option2">Difficulty level</label>
-      <select id="option2">
-        <option value="Easy">Easy</option>
-        <option value="Normal">Normal</option>
-        <option value="Hard">Hard</option>
-      </select>
-    </div>
-    <button type="submit">Submit</button>
-  </form>
+    <h1>Push-Up Posture Prediction</h1>
+    <video id="video" autoplay playsinline width="640" height="480"></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script type="module">
+        // Get video and canvas elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-  <script>
-    const slider = document.getElementById('slider1');
-    const sliderValue = document.getElementById('sliderValue');
-    const check_form = document.getElementById('check-form');
+        // Initialize MediaPipe Pose
+        const pose = new Pose({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+        });
+        pose.setOptions({
+            modelComplexity: 1,
+            smoothLandmarks: true,
+            enableSegmentation: false,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
 
-    slider.oninput = function() {
-      sliderValue.textContent = this.value;
-    };
+        const camera = new Camera(video, {
+            onFrame: async () => {
+                await pose.send({ image: video });
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
 
-    check_form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+        // Draw landmarks and call predict
+        pose.onResults(async (results) => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
-      const diffValue = document.getElementById("option2").value;
-      const slider = parseInt(sliderValue.textContent);
-      let fatigueValue;
+            // Draw pose landmarks
+            if (results.poseLandmarks) {
+                // Extract normalized landmarks as an array
+                const landmarks = results.poseLandmarks.flatMap(l => [l.x, l.y, l.z]);
 
-      if (slider >= 1 && slider < 3) {
-        fatigueValue = "Very Light";
-      } else if (slider >= 3 && slider < 5) {
-        fatigueValue = "Light";
-      } else if (slider >= 5 && slider < 7) {
-        fatigueValue = "Moderate";
-      } else if (slider >= 7 && slider < 9) {
-        fatigueValue = "Quite Tired";
-      } else if (slider == 9) {
-        fatigueValue = "Very Tired";
-      } else if (slider == 10) {
-        fatigueValue = "Extremely Tired";
-      }
+                // Convert frame to tensor for ONNX model
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const imageTensor = tf.browser.fromPixels(imageData);
 
-      const form_DB = fatigueValue + "-" + diffValue;
+                try {
+                  const a = await check_pushup(imageTensor, landmarks);
+                  console.log(a);
+                } catch (err) {
+                    console.error('Prediction error:', err);
+                }
 
-      console.log(form_DB);
-    });
-  </script>
+                imageTensor.dispose();
+            }
+        });
+    </script>
 </body>
 </html>
