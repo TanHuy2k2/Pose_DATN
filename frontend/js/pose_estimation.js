@@ -31,6 +31,9 @@ let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_
 let exercise = ["DUMBBELL CURL", "PUSH UP", "SQUAT", "form", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true, form_submit = false;
 
+const ALPHA = 0.5;
+let emaLandmarks = null;
+
 const slider = document.getElementById('slider1');
 const sliderValue = document.getElementById('sliderValue');
 const check_form = document.getElementById('check-form');
@@ -220,19 +223,42 @@ function countdown(restTime) {
     }, 1000); // Run every second
 }
 
-function draw_Canvas(results){
+// Hàm áp dụng EMA
+function applyEma(currentLandmarks, emaLandmarks, alpha) {
+    if (!emaLandmarks) {
+        // Nếu chưa có dữ liệu trước, trả về landmark hiện tại
+        return currentLandmarks.map(({ x, y, z, visibility }) => ({ x, y, z, visibility }));
+    }
+    return currentLandmarks.map((current, i) => ({
+        x: alpha * current.x + (1 - alpha) * emaLandmarks[i].x,
+        y: alpha * current.y + (1 - alpha) * emaLandmarks[i].y,
+        z: alpha * current.z + (1 - alpha) * emaLandmarks[i].z,
+        visibility: alpha * current.visibility + (1 - alpha) * emaLandmarks[i].visibility,
+    }));
+}
+
+function draw_Canvas(results, specificLandmarks){
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     canvasCtx.drawImage(results.image, 0, 0,
                           canvasElement.width, canvasElement.height);
     
-    // Only overwrite existing pixels.
-    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
-                     {color: '#00FF00', lineWidth: 1, radius: 2});
+    specificLandmarks.forEach((landmark, index) => {
 
-    drawLandmarks(canvasCtx, results.poseLandmarks,
-                    {color: '#FF0000', lineWidth: 0.2, radius: 2});
+        const x = landmark.x * canvasElement.width;
+        const y = landmark.y * canvasElement.height;
+        canvasCtx.beginPath();
+        canvasCtx.arc(x, y, 4, 0, 2 * Math.PI);
+        canvasCtx.fillStyle = 'red';
+        canvasCtx.fill();
+    });
+    // // Only overwrite existing pixels.
+    // drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
+    //                  {color: '#00FF00', lineWidth: 1, radius: 2});
+
+    // drawLandmarks(canvasCtx, results.poseLandmarks,
+    //                 {color: '#FF0000', lineWidth: 0.2, radius: 2});
 }
     
 function onResults(results) {
@@ -249,6 +275,8 @@ function onResults(results) {
 
     if (landmarks) {
 
+        emaLandmarks = applyEma(results.poseLandmarks, emaLandmarks, ALPHA);
+
         if (exercise[next_ex] == "DUMBBELL CURL"){
             if (box_ex){
                 exercise_box.style.display = "flex";
@@ -258,8 +286,12 @@ function onResults(results) {
                 box_ex = false;
                 speakText("Please! Straighten your hand.");
             }
-            draw_Canvas(results);
-            dumbbell_curl(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16]);
+            
+            const specificLandmarks = [11, 12, 13, 14, 15, 16].map(index => emaLandmarks[index]);
+            draw_Canvas(results, specificLandmarks);
+            dumbbell_curl(specificLandmarks[0], specificLandmarks[1], specificLandmarks[2], 
+                specificLandmarks[3], specificLandmarks[4], specificLandmarks[5]
+            );
         }else if(exercise[next_ex] == "PUSH UP"){    
             dumbbell.style.display = "none";
             if (box_ex){
@@ -275,9 +307,13 @@ function onResults(results) {
                 check_count = false;
                 speakText('Place your hands wider than shoulder-width, body straight.');
             }
-            draw_Canvas(results);
-            push_up(landmarks[11], landmarks[12], landmarks[13], landmarks[14], landmarks[15], landmarks[16],
-                landmarks[23], landmarks[24], landmarks[25], landmarks[26], landmarks[27], landmarks[28]);
+            const specificLandmarks = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].map(index => emaLandmarks[index]);
+            draw_Canvas(results, specificLandmarks);
+            push_up(specificLandmarks[0], specificLandmarks[1], specificLandmarks[2], 
+                specificLandmarks[3], specificLandmarks[4], specificLandmarks[5], specificLandmarks[6],
+                specificLandmarks[7], specificLandmarks[8], specificLandmarks[9], specificLandmarks[10],
+                specificLandmarks[11]
+            );
         }else if(exercise[next_ex] == "SQUAT"){
             dumbbell.style.display = "none";
             if (box_ex){
@@ -293,8 +329,12 @@ function onResults(results) {
                 check_count = false;
                 speakText('Stand straight, feet shoulder-width apart, arms extended in front.');
             }
-            draw_Canvas(results);
-            squat(landmarks[11], landmarks[12], landmarks[23], landmarks[24], landmarks[25], landmarks[26], landmarks[27], landmarks[28]);
+            const specificLandmarks = [11, 12, 23, 24, 25, 26, 27, 28].map(index => emaLandmarks[index]);
+            draw_Canvas(results, specificLandmarks);
+            squat(specificLandmarks[0], specificLandmarks[1], specificLandmarks[2],
+                specificLandmarks[3], specificLandmarks[4], specificLandmarks[5], specificLandmarks[6],
+                specificLandmarks[7]
+            );
         }else if(exercise[next_ex] == "form"){
             check_form.style.display = "flex";
             exercise_box.style.display = "none";

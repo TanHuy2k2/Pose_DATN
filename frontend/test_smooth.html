@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera with EMA</title>
+  <script src="/frontend/js/check_pushup.js"></script>
+  <style>
+    video, canvas {
+      width: 640px;
+      height: 480px;
+      border: 1px solid black;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <video id="camera" autoplay></video>
+  <canvas id="output"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+  <script>
+    // Khởi tạo MediaPipe Pose
+    const pose = new Pose({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+    });
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: false, // Không dùng smoothing tích hợp, tự làm mượt với EMA
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    const videoElement = document.getElementById('camera');
+    const canvasElement = document.getElementById('output');
+    const canvasCtx = canvasElement.getContext('2d');
+
+    // Camera setup
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await pose.send({ image: videoElement });
+      },
+      width: 640,
+      height: 480,
+    });
+    camera.start();
+
+    // Hệ số làm mượt EMA
+    const ALPHA = 0.3;
+    let emaLandmarks = null;
+
+    // Hàm áp dụng EMA
+    function applyEma(currentLandmarks, emaLandmarks, alpha) {
+      if (!emaLandmarks) {
+        // Nếu chưa có dữ liệu trước, trả về landmark hiện tại
+        return currentLandmarks.map(({ x, y, z, visibility }) => ({ x, y, z, visibility }));
+      }
+      return currentLandmarks.map((current, i) => ({
+        x: alpha * current.x + (1 - alpha) * emaLandmarks[i].x,
+        y: alpha * current.y + (1 - alpha) * emaLandmarks[i].y,
+        z: alpha * current.z + (1 - alpha) * emaLandmarks[i].z,
+        visibility: alpha * current.visibility + (1 - alpha) * emaLandmarks[i].visibility,
+      }));
+    }
+
+    // Lắng nghe sự kiện landmarks từ MediaPipe
+    pose.onResults((results) => {
+      if (results.poseLandmarks) {
+        // Áp dụng EMA
+        emaLandmarks = applyEma(results.poseLandmarks, emaLandmarks, ALPHA);
+
+        const specificLandmarks = [11, 12, 13, 14, 15, 16].map(index => emaLandmarks[index]);
+
+        const dpr = window.devicePixelRatio || 1
+
+        canvasElement.width = 640 * dpr;
+        canvasElement.height = 480 * dpr;
+
+        // Vẽ video lên canvas
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+        // console.log(check_pushup(results.image, emaLandmarks));
+
+        console.log("EMA: ",specificLandmarks[0]);
+
+        // Vẽ landmarks đã làm mượt
+        specificLandmarks.forEach((landmark, index) => {
+
+          const x = landmark.x * canvasElement.width;
+          const y = landmark.y * canvasElement.height;
+          canvasCtx.beginPath();
+          canvasCtx.arc(x, y, 4, 0, 2 * Math.PI);
+          canvasCtx.fillStyle = 'lime';
+          canvasCtx.fill();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
