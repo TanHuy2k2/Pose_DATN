@@ -173,13 +173,13 @@
                                knee.x, knee.y, knee.z,
                                ankle.x, ankle.y, ankle.z];
 
-            console.log("Angles: ", angles);
-            console.log("Check: ", check_pushup(tensorImage, landmarks, angles));
+            const result = check_pushup(tensorImage, landmarks, angles);
+            
+            result.then(rs => {
+              console.log("Check: ", rs);
+            })
+            
         }
-
-        
-
-        // console.log("EMA: ",specificLandmarks[0]);
 
         // Vẽ landmarks đã làm mượt
         specificLandmarks.forEach((landmark, index) => {

@@ -26,7 +26,7 @@ const dumbbell = document.getElementById('dumbbell');
 
 let id;
 
-let shoulder = [0,0], elbow = [0,0], wrist = [0,0], hip = [0,0], knee = [0,0], ankle = [0,0];
+let shoulder, elbow, wrist, hip, knee, ankle;
 let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
 let exercise = ["DUMBBELL CURL", "PUSH UP", "SQUAT", "form", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true, form_submit = false;
@@ -278,6 +278,8 @@ function onResults(results) {
         emaLandmarks = applyEma(results.poseLandmarks, emaLandmarks, ALPHA);
 
         if (exercise[next_ex] == "DUMBBELL CURL"){
+            source.src = "video/BicepsCurl.mp4";
+            source.load();
             if (box_ex){
                 exercise_box.style.display = "flex";
                 worker.postMessage({ type: 'get_exercise_1',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
@@ -294,6 +296,8 @@ function onResults(results) {
             );
         }else if(exercise[next_ex] == "PUSH UP"){    
             dumbbell.style.display = "none";
+            source.src = "video/pushup.mp4";
+            source.load();
             if (box_ex){
                 exercise_box.style.display = "flex";
                 sets = 0;
@@ -314,8 +318,16 @@ function onResults(results) {
                 specificLandmarks[7], specificLandmarks[8], specificLandmarks[9], specificLandmarks[10],
                 specificLandmarks[11]
             );
+            const image = canvasCtx.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            push_up_test(image, specificLandmarks[0], specificLandmarks[1], specificLandmarks[2], 
+                specificLandmarks[3], specificLandmarks[4], specificLandmarks[5], specificLandmarks[6],
+                specificLandmarks[7], specificLandmarks[8], specificLandmarks[9], specificLandmarks[10],
+                specificLandmarks[11]
+            );
         }else if(exercise[next_ex] == "SQUAT"){
             dumbbell.style.display = "none";
+            source.src = "video/squat.mp4";
+            source.load();
             if (box_ex){
                 exercise_box.style.display = "flex";
                 sets = 0;
@@ -429,8 +441,6 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
         check_count = false;
         form_submit = true;
         next_ex += 1;
-        source.src = "video/pushup.mp4";
-        source.load();
     }
 
     if (check_count){
@@ -498,8 +508,6 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
         check_count = false;
         form_submit = true;
         next_ex += 1;
-        source.src = "video/squat.mp4";
-        source.load();
     }
 
     if (check_count){
@@ -513,6 +521,96 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
     canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
     canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
     canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
+}
+
+function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
+    if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8) && (lm_13.visibility > 0.8) 
+        && (lm_15.visibility > 0.8) && (lm_23.visibility > 0.8)  
+        && (lm_25.visibility > 0.8) && (lm_27.visibility > 0.8)){
+            shoulder = lm_11;
+            elbow = lm_13;
+            wrist = lm_15;
+            hip = lm_23;
+            knee = lm_25;
+            ankle = lm_27;
+    }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8) && (lm_14.visibility > 0.8) 
+        && (lm_16.visibility > 0.8) && (lm_24.visibility > 0.8) 
+        && (lm_26.visibility > 0.8) && (lm_28.visibility > 0.8)){
+            shoulder = lm_12;
+            elbow = lm_14;
+            wrist = lm_16;
+            hip = lm_24;
+            knee = lm_26;
+            ankle = lm_28;
+    }   
+
+    if (shoulder && elbow && wrist && hip && knee && ankle){
+        elbow_angle = calculate_angle(shoulder, elbow, wrist)
+        hip_angle = calculate_angle(shoulder, hip, knee)
+        knee_angle = calculate_angle(hip, knee, ankle)
+
+        const angles =  [elbow_angle, hip_angle, knee_angle];
+
+        const tensorImage = tf.browser.fromPixels(img);
+
+        const landmarks = [shoulder.x, shoulder.y, shoulder.z,
+                           elbow.x, elbow.y, elbow.z,
+                           wrist.x, wrist.y, wrist.z,
+                           hip.x, hip.y, hip.z,
+                           knee.x, knee.y, knee.z,
+                           ankle.x, ankle.y, ankle.z];
+
+        const result = check_pushup(tensorImage, landmarks, angles);
+        
+        result.then(rs => {
+            console.log("Check: ", rs);
+            if (rs === "correct_up" && !check_reps && !check_sets){
+                check_reps = true;
+                speakText("Lower your body until elbows form a 90-degree angle.");
+            }
+            if (rs === "correct_down" && check_reps){
+                check_reps = true;
+                check_reps = false;
+                count_reps -= 1;
+                speakText("Push up, fully extending your arms.");
+            }
+        
+            if (count_reps == 0 && set_ex){
+                speakText("Rest and prepare for the next rep.!");
+                sets -= 1
+                hasSpoken = false;
+                count_reps = reps;
+                check_sets = true;
+                check_count = true;
+            }
+        
+            if (sets == 0){
+                count_reps = 0;
+                set_ex = false;
+            }else if (sets < 0){
+                check_sets = false;
+                box_ex = true;
+                check_count = false;
+                form_submit = true;
+                next_ex += 1;
+            }
+        
+            if (check_count){
+                countdown(rest);
+            }
+        
+            set_exercise(0, sets, count_reps, count_rest);
+        
+            canvasCtx.font = '18px Arial';
+            canvasCtx.fillStyle = '#00FF00';
+            canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
+            canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
+            canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
+        
+        })
+        
+    }
+
 }
 
 function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
