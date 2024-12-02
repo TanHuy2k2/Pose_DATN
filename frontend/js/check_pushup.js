@@ -1,9 +1,9 @@
-async function check_pushup(imageTensor, landmarks) {
+async function check_pushup(imageTensor, landmarks, angles) {
 
     const classLabels = ["correct_up", "incorrect_up", "correct_down", "incorrect_down"];
 
     // Load the ONNX model
-    const session = await ort.InferenceSession.create('../model/check_push_up.onnx');
+    const session = await ort.InferenceSession.create('../model/MobileNet.onnx');
 
     // Preprocess the image using TensorFlow.js
     let imgPre = imageTensor
@@ -15,16 +15,15 @@ async function check_pushup(imageTensor, landmarks) {
 
     const imgArray = imgPre.dataSync();
     
-    const inputTensor = new ort.Tensor('float32', imgArray, [1, 224, 224, 3]);
-    
     const inputs = {
-        'image_input': inputTensor,
+        'image_input': new ort.Tensor('float32', imgArray, [1, 224, 224, 3]), 
         'landmark_input': new ort.Tensor("float32", new Float32Array(landmarks), [1, landmarks.length]),
+        'angles_input': new ort.Tensor("float32", new Float32Array(angles), [1, angles.length]),
     };
 
     const output = await session.run(inputs);
 
-    const ar = Array.from(output.dense_7.cpuData);
+    const ar = Array.from(output.dense_3.cpuData);
 
     const maxIndex = ar.indexOf(Math.max(...ar));
 
