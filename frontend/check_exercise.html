@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
@@ -13,12 +14,6 @@
 </head>
 
 <body>
-  
-  <div class="topnav">
-    <a href="javascript:void(0);" class="icon" onclick="click_form()">
-      <i class="fa fa-remove" id="toggleIcon"></i>
-    </a>
-  </div>
 
   <div class="exercise-box" id="exercise-box">
     <h3 id="exercise-name"></h3>
@@ -31,8 +26,14 @@
   <div id="notification-container"></div>
 
   <div class="main-container">
+    
     <div class="form-container" id="formContainer">
-      <form action="" id="form">
+      <div class="topnav">
+        <a href="javascript:void(0);" class="icon" onclick="click_form()">
+          <i class="fa fa-remove" id="toggleIcon"></i>
+        </a>
+      </div>
+      <form action="" id="form-form">
         <div class="row-name">
           <input type="text" id="name" disabled>
         </div>

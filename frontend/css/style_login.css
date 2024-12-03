@@ -20,7 +20,7 @@ html {
     right: 0;
     width: 100%;
     padding: 15px 20px;
-    background-color: #000;
+    background:none;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,7 +30,7 @@ html {
   
 .logo {
     display: flex;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     color: #fff;
     width: 100%;

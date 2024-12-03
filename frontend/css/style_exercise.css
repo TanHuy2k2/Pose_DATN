@@ -1,15 +1,15 @@
 /* Top Navigation */
 .topnav {
-  background-color: #333;
+  background: none;
   overflow: hidden;
   position: absolute;
-  top: 20px;
+  top: -50px;
   left: 3px;
   padding: 10px;
 }
 
 .topnav .icon {
-  color: white;
+  color: black;
   font-size: 18px;
   cursor: pointer;
 }
@@ -68,7 +68,6 @@ body, html {
   max-width: 200px; /* Set max width */
   margin-left: 0;
   padding: 15px;
-  border: 2px solid #333;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -223,9 +222,7 @@ body, html {
 }
 
 @media (max-width: 1200px) {
-  .topnav {
-    top: 50px;
-  }
+
   .main-container{
     margin-right: 0;
   }
@@ -237,9 +234,6 @@ body, html {
 }
 
 @media (max-width: 1000px) {
-  .topnav {
-    top: 10px;
-  }
   #container {
     display: block;
   }

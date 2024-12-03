@@ -4,7 +4,8 @@ const canvasCtx = canvasElement.getContext('2d', { willReadFrequently: true });
 
 const source = document.getElementById("video_check");
 
-const form = document.getElementById("formContainer");
+const formcontainer = document.getElementById("formContainer");
+const form = document.getElementById("form-form");
 const icon = document.getElementById("toggleIcon");
 
 const notification= document.getElementById("notification-container");
@@ -78,12 +79,14 @@ slider.oninput = function() {
 function click_form() {
     if (form.style.display === "none" || form.style.display === "") {
       form.style.display = "block";
-      icon.classList.remove("fa-bars");
+      formcontainer.style.padding = "15px";
+      icon.classList.remove("fa-ellipsis-v");
       icon.classList.add("fa-remove");
     } else {
       form.style.display = "none";
+      formcontainer.style.padding = 0;
       icon.classList.remove("fa-remove");
-      icon.classList.add("fa-bars");
+      icon.classList.add("fa-ellipsis-v");
     }
 }
 
@@ -192,7 +195,7 @@ function getCookies() {
 
 function calculate_angle(a, b, c){
 
-    const radians = Math.atan2(c[1] - b[1], c[0] - b[0]) - Math.atan2(a[1] - b[1], a[0] - b[0]);
+    const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
     let angle = Math.abs(radians * 180.0 / Math.PI);
 
     if (angle > 180.0) {
@@ -200,6 +203,37 @@ function calculate_angle(a, b, c){
     }
     
     return angle;
+}
+
+function calculate_angle_3d(a, b, c) {
+    const x1 = a.x, y1 = a.y, z1 = a.z;
+    const x2 = b.x, y2 = b.y, z2 = b.z;
+    const x3 = c.x, y3 = c.y, z3 = c.z;
+
+    // Vectors BA and BC
+    const BA = [x1 - x2, y1 - y2, z1 - z2];
+    const BC = [x3 - x2, y3 - y2, z3 - z2];
+
+    // Dot product
+    const dotProduct = BA[0] * BC[0] + BA[1] * BC[1] + BA[2] * BC[2];
+
+    // Magnitudes
+    const magnitudeBA = Math.sqrt(BA[0] ** 2 + BA[1] ** 2 + BA[2] ** 2);
+    const magnitudeBC = Math.sqrt(BC[0] ** 2 + BC[1] ** 2 + BC[2] ** 2);
+
+    // Cosine of the angle
+    let cosTheta = dotProduct / (magnitudeBA * magnitudeBC);
+
+    // Clamp cosTheta to the valid range [-1, 1] to avoid math domain errors
+    cosTheta = Math.max(-1.0, Math.min(1.0, cosTheta));
+
+    // Angle in radians
+    const angleRad = Math.acos(cosTheta);
+
+    // Convert to degrees (optional)
+    const angleDeg = angleRad * (180 / Math.PI);
+
+    return Math.round(angleDeg);
 }
 
 function countdown(restTime) {
@@ -278,15 +312,15 @@ function onResults(results) {
         emaLandmarks = applyEma(results.poseLandmarks, emaLandmarks, ALPHA);
 
         if (exercise[next_ex] == "DUMBBELL CURL"){
-            source.src = "video/BicepsCurl.mp4";
-            source.load();
             if (box_ex){
+                source.src = "video/BicepsCurl.mp4";
+                source.load();
                 exercise_box.style.display = "flex";
                 worker.postMessage({ type: 'get_exercise_1',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
                 showNotification("Exercise is DUMBBELL CURL!!!");
                 speakText('Get ready! Your exercise is Dumbbell Curl!');
                 box_ex = false;
-                speakText("Please! Straighten your hand.");
+                speakText("Please! Straighten your hand.");  
             }
             
             const specificLandmarks = [11, 12, 13, 14, 15, 16].map(index => emaLandmarks[index]);
@@ -295,10 +329,10 @@ function onResults(results) {
                 specificLandmarks[3], specificLandmarks[4], specificLandmarks[5]
             );
         }else if(exercise[next_ex] == "PUSH UP"){    
-            dumbbell.style.display = "none";
-            source.src = "video/pushup.mp4";
-            source.load();
+            dumbbell.style.display = "none"; 
             if (box_ex){
+                source.src = "video/pushup.mp4";
+                source.load();
                 exercise_box.style.display = "flex";
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_2',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value});
@@ -309,7 +343,7 @@ function onResults(results) {
                 check_sets = false;
                 hasSpoken = false;
                 check_count = false;
-                speakText('Place your hands wider than shoulder-width, body straight.');
+                speakText('Place your hands wider than shoulder-width, body straight!');
             }
             const specificLandmarks = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].map(index => emaLandmarks[index]);
             draw_Canvas(results, specificLandmarks);
@@ -326,9 +360,9 @@ function onResults(results) {
             );
         }else if(exercise[next_ex] == "SQUAT"){
             dumbbell.style.display = "none";
-            source.src = "video/squat.mp4";
-            source.load();
             if (box_ex){
+                source.src = "video/squat.mp4";
+                source.load();
                 exercise_box.style.display = "flex";
                 sets = 0;
                 worker.postMessage({ type: 'get_exercise_3',  age_db: input_age.value, gender_db: input_gender.value, level_db: input_level.value, bmi_label: input_bmi.value});
@@ -398,129 +432,140 @@ check_form.addEventListener("submit", async (e) => {
 function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 
     if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8) && (lm_15.visibility > 0.8)){
-        shoulder = [lm_11.x, lm_11.y];
-        elbow = [lm_13.x, lm_13.y];
-        wrist = [lm_15.x, lm_15.y];
+        shoulder = lm_11;
+        elbow = lm_13;
+        wrist = lm_15;
     }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8) && (lm_16.visibility > 0.8)){
-        shoulder = [lm_12.x, lm_12.y];
-        elbow = [lm_14.x, lm_14.y];
-        wrist = [lm_16.x, lm_16.y];
-    }        
-    // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
-    const angle = calculate_angle(shoulder, elbow, wrist);
+        shoulder = lm_12;
+        elbow = lm_14;
+        wrist = lm_16;
+    } 
+    
+    if (shoulder && elbow && wrist){
+        // Tính góc với đk elbow và wrist cùng đường dọc có thể lệch nhau tầm 2-5px.
+        const angle = calculate_angle_3d(shoulder, elbow, wrist);
 
-    if (angle > 155 && !check_reps && !check_sets){
-        check_reps = true;
-        speakText("Raise the weights!");
-    }
-
-    if (angle < 45 && check_reps){
-        console.log("angle: ", angle);
-        check_reps = false;
-        if (Math.abs(shoulder[0] - elbow[0]) <= 0.07){
-            speakText("Lower the weights!");
-            count_reps -= 1;
+        if (angle >= 155 && !check_reps && !check_sets){
+            check_reps = true;
+            speakText("Raise the weights close to 55 degree!");
         }
+        
+        if (angle < 155 && angle > 55){
+            speakText("Move the weights a little closer to the target angle!");
+        }
+
+        if (angle <= 55 && check_reps){
+            console.log("angle: ", angle);
+            check_reps = false;
+            if (Math.abs(shoulder.x - elbow.x) <= 0.1){
+                speakText("Lower the weights over 160 degree, straighthen your hands!");
+                count_reps -= 1;
+            }
+        }
+
+        if (count_reps == 0 && set_ex){
+            speakText("Rest and prepare for the next rep!");
+            sets -= 1
+            hasSpoken = false;
+            count_reps = reps;
+            check_sets = true;
+            check_count = true;
+        }
+
+        if (sets == 0){
+            count_reps = 0;
+            set_ex = false;
+        }else if (sets < 0){
+            check_sets = false;
+            box_ex = true;
+            check_count = false;
+            form_submit = true;
+            next_ex += 1;
+        }
+
+        if (check_count){
+            countdown(rest);
+        }
+
+        set_exercise(db_weights, sets, count_reps, count_rest);
+
+        canvasCtx.font = '18px Arial';
+        canvasCtx.fillStyle = '#00FF00';
+        canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
+
     }
-
-    if (count_reps == 0 && set_ex){
-        speakText("Rest and prepare for the next repetition!");
-        sets -= 1
-        hasSpoken = false;
-        count_reps = reps;
-        check_sets = true;
-        check_count = true;
-    }
-
-    if (sets == 0){
-        count_reps = 0;
-        set_ex = false;
-    }else if (sets < 0){
-        check_sets = false;
-        box_ex = true;
-        check_count = false;
-        form_submit = true;
-        next_ex += 1;
-    }
-
-    if (check_count){
-        countdown(rest);
-    }
-
-    set_exercise(db_weights, sets, count_reps, count_rest);
-
-    canvasCtx.font = '18px Arial';
-    canvasCtx.fillStyle = '#00FF00';
-    canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
 } 
 
 function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
     if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8) && (lm_13.visibility > 0.8) 
         && (lm_15.visibility > 0.8) && (lm_23.visibility > 0.8)  
         && (lm_25.visibility > 0.8) && (lm_27.visibility > 0.8)){
-        shoulder = [lm_11.x, lm_11.y];
-        elbow = [lm_13.x, lm_13.y];
-        wrist = [lm_15.x, lm_15.y];
-        hip = [lm_23.x, lm_23.y];
-        knee = [lm_25.x, lm_25.y];
-        ankle = [lm_27.x, lm_27.y];
+            shoulder = lm_11;
+            elbow = lm_13;
+            wrist = lm_15;
+            hip = lm_23;
+            knee = lm_25;
+            ankle = lm_27;
     }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8) && (lm_14.visibility > 0.8) 
         && (lm_16.visibility > 0.8) && (lm_24.visibility > 0.8) 
         && (lm_26.visibility > 0.8) && (lm_28.visibility > 0.8)){
-        shoulder = [lm_12.x, lm_12.y];
-        elbow = [lm_14.x, lm_14.y];
-        wrist = [lm_16.x, lm_16.y];
-        hip = [lm_24.x, lm_24.y];
-        knee = [lm_26.x, lm_26.y];
-        ankle = [lm_28.x, lm_28.y];
+            shoulder = lm_12;
+            elbow = lm_14;
+            wrist = lm_16;
+            hip = lm_24;
+            knee = lm_26;
+            ankle = lm_28;
     }   
 
-    const angle_elbow = calculate_angle(shoulder, elbow, wrist); 
-    const angle_hip = calculate_angle(shoulder, hip, knee); 
-    const angle_knee = calculate_angle(hip, knee, ankle); 
+    if (shoulder && elbow && wrist && hip && knee && ankle){
+        const angle_elbow = calculate_angle_3d(shoulder, elbow, wrist); 
+        const angle_hip = calculate_angle_3d(shoulder, hip, knee); 
+        const angle_knee = calculate_angle_3d(hip, knee, ankle); 
 
-    if (angle_elbow > 160 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
-        check_reps = true;
-        speakText("Lower your body until elbows form a 90-degree angle.");
+        if (angle_elbow > 160 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
+            check_reps = true;
+            speakText("Lower your body until elbows form a 90-degree angle.");
+        }
+
+        if (angle_elbow < 90 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && check_reps){
+            check_reps = false;
+            count_reps -= 1;
+            speakText("Push up, fully extending your arms.");
+        }
+
+        if (count_reps == 0 && set_ex){
+            speakText("Rest and prepare for the next rep!");
+            sets -= 1
+            hasSpoken = false;
+            count_reps = reps;
+            check_sets = true;
+            check_count = true;
+        }
+
+        if (sets == 0){
+            count_reps = 0;
+            set_ex = false;
+        }else if (sets < 0){
+            check_sets = false;
+            box_ex = true;
+            check_count = false;
+            form_submit = true;
+            next_ex += 1;
+        }
+
+        if (check_count){
+            countdown(rest);
+        }
+
+        set_exercise(0, sets, count_reps, count_rest);
+
+        canvasCtx.font = '18px Arial';
+        canvasCtx.fillStyle = '#00FF00';
+        canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
+        canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
+        canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
+
     }
-    if (angle_elbow < 90 && (160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && check_reps){
-        check_reps = true;
-        check_reps = false;
-        count_reps -= 1;
-        speakText("Push up, fully extending your arms.");
-    }
-
-    if (count_reps == 0 && set_ex){
-        speakText("Rest and prepare for the next rep.!");
-        sets -= 1
-        hasSpoken = false;
-        count_reps = reps;
-        check_sets = true;
-        check_count = true;
-    }
-
-    if (sets == 0){
-        count_reps = 0;
-        set_ex = false;
-    }else if (sets < 0){
-        check_sets = false;
-        box_ex = true;
-        check_count = false;
-        form_submit = true;
-        next_ex += 1;
-    }
-
-    if (check_count){
-        countdown(rest);
-    }
-
-    set_exercise(0, sets, count_reps, count_rest);
-
-    canvasCtx.font = '18px Arial';
-    canvasCtx.fillStyle = '#00FF00';
-    canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
-    canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
-    canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
 }
 
 function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
@@ -568,8 +613,18 @@ function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_2
                 check_reps = true;
                 speakText("Lower your body until elbows form a 90-degree angle.");
             }
-            if (rs === "correct_down" && check_reps){
+
+            if (rs === "incorrect_up"){
+                speakText("Straighten your whole body, keep your hand up.");
+                check_reps = false;
+            }
+            
+            if (rs === "incorrect_down"){
+                speakText("Keep your chest close to the ground, your hands form 90-degree angle.");
                 check_reps = true;
+            }
+
+            if (rs === "correct_down" && check_reps){
                 check_reps = false;
                 count_reps -= 1;
                 speakText("Push up, fully extending your arms.");
@@ -616,62 +671,65 @@ function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_2
 function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
     if ((lm_11.visibility > lm_12.visibility) && (lm_11.visibility > 0.8) && (lm_23.visibility > 0.8)  
         && (lm_25.visibility > 0.8) && (lm_27.visibility > 0.8)){
-        shoulder = [lm_11.x, lm_11.y];
-        hip = [lm_23.x, lm_23.y];
-        knee = [lm_25.x, lm_25.y];
-        ankle = [lm_27.x, lm_27.y];
+            shoulder = lm_11;
+            hip = lm_23;
+            knee = lm_25;
+            ankle = lm_27;
     }else if ((lm_12.visibility > lm_11.visibility) && (lm_12.visibility > 0.8) && (lm_24.visibility > 0.8) 
         && (lm_26.visibility > 0.8) && (lm_28.visibility > 0.8)){
-        shoulder = [lm_12.x, lm_12.y];
-        hip = [lm_24.x, lm_24.y];
-        knee = [lm_26.x, lm_26.y];
-        ankle = [lm_28.x, lm_28.y];
+            shoulder = lm_12;
+            hip = lm_24;
+            knee = lm_26;
+            ankle = lm_28;
     }   
 
-    const angle_hip = calculate_angle(shoulder, hip, knee); 
-    const angle_knee = calculate_angle(hip, knee, ankle); 
+    if (shoulder && hip && knee && ankle){
+        const angle_hip = calculate_angle(shoulder, hip, knee); 
+        const angle_knee = calculate_angle(hip, knee, ankle); 
 
-    if ((160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
-        check_reps = true;
-        speakText("Lower your hips, keeping your back straight!")
+        if ((160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
+            check_reps = true;
+            speakText("Lower your hips, keeping your back straight!")
+        }
+
+        if ((angle_hip < 70 && angle_knee < 70) && check_reps){
+            check_reps = true;
+            check_reps = false;
+            count_reps -= 1;
+            speakText("Push up to the starting position, keeping your body upright.")
+        }
+
+        if (count_reps == 0 && set_ex){
+            speakText("Rest and prepare for the next rep!!");
+            sets -= 1
+            hasSpoken = false;
+            count_reps = reps;
+            check_sets = true;
+            check_count = true;
+        }
+
+        if (sets == 0){
+            count_reps = 0;
+            set_ex = false;
+        }else if (sets < 0){
+            check_sets = false;
+            box_ex = true;
+            check_count = false;
+            form_submit = true;
+            next_ex += 1;
+        }
+
+        if (check_count){
+            countdown(rest);
+        }
+
+        set_exercise(0, sets, count_reps, count_rest);
+
+        canvasCtx.font = '18px Arial';
+        canvasCtx.fillStyle = '#00FF00';
+        canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
+        canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
     }
-    if ((angle_hip < 70 && angle_knee < 70) && check_reps){
-        check_reps = true;
-        check_reps = false;
-        count_reps -= 1;
-        speakText("Push up to the starting position, keeping your body upright.")
-    }
-
-    if (count_reps == 0 && set_ex){
-        speakText("Rest and prepare for the next rep!!");
-        sets -= 1
-        hasSpoken = false;
-        count_reps = reps;
-        check_sets = true;
-        check_count = true;
-    }
-
-    if (sets == 0){
-        count_reps = 0;
-        set_ex = false;
-    }else if (sets < 0){
-        check_sets = false;
-        box_ex = true;
-        check_count = false;
-        form_submit = true;
-        next_ex += 1;
-    }
-
-    if (check_count){
-        countdown(rest);
-    }
-
-    set_exercise(0, sets, count_reps, count_rest);
-
-    canvasCtx.font = '18px Arial';
-    canvasCtx.fillStyle = '#00FF00';
-    canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
-    canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
 }
     
 const pose = new Pose({locateFile: (file) => {

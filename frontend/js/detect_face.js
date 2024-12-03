@@ -92,7 +92,7 @@ async function onResults(results) {
     canvasCtx.clearRect(0, 0, videoWidth, videoHeight);
     
     // Draw the results image maintaining the aspect ratio
-    canvasCtx.drawImage(results.image, 0, 0, videoWidth, videoHeight);
+    canvasCtx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
     if (results.detections && results.detections.length > 0) {
         const detection = results.detections[0];
