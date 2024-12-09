@@ -70,12 +70,12 @@ body {
 /* Hero section */
 .hero {
   text-align: center;
-  padding: 100px 20px;
+  padding: 170px 20px;
   background-image: url('/frontend/images/hero-bg.jpg'); /* Replace with your image if available */
   background-size: cover;
   background-position: center;
   width: 100%;
-  height: 30em;
+  height: 40em;
   color: #fff;
   margin-top: 76px;
 }
@@ -106,14 +106,14 @@ body {
 /* Testimonial section */
 .testimonial {
   text-align: center;
-  padding: 120px 20px;
+  padding: 150px 20px;
   color: #333;
   background-color: #fff;
   border: 2px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 5px;
-  height: 27em;
+  height: 35em;
 }
 .testimonial .stars {
   font-size: 24px;

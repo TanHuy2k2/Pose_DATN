@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Enable CORS for all routes and methods from your frontend origin
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 # Define the necessary functions
 def img_to_encoding(image):

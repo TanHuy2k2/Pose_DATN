@@ -28,7 +28,7 @@ const dumbbell = document.getElementById('dumbbell');
 let id;
 
 let shoulder, elbow, wrist, hip, knee, ankle;
-let sets, reps, count_reps, rest, count_rest, camera, check_reps = false, check_sets = false, set_ex = true, check_count = false;
+let sets, reps, count_reps, rest, count_rest, camera, check_angle = false, check_reps = false, check_sets = false, set_ex = true, check_count = false;
 let exercise = ["DUMBBELL CURL", "PUSH UP", "SQUAT", "form", "complete"], next_ex = 0, hasSpoken = false;
 let box_ex = true, form_submit = false;
 
@@ -103,20 +103,25 @@ function showNotification(message) {
 function speakText(text) {
     // Check if the browser supports speech synthesis
     if ('speechSynthesis' in window) {
-      const speech = new SpeechSynthesisUtterance(text);
-      
-      // Optional: Set voice, pitch, rate, etc.
-      speech.lang = 'en-US';
-      speech.pitch = 1;  // Range between 0 and 2
-      speech.rate = 1.5;   // Range between 0.1 and 2
-      speech.volume = 1; // Range between 0 and 1
+        
+        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+            window.speechSynthesis.cancel();
+        }
 
-      // Speak the text
-      window.speechSynthesis.speak(speech);
+        const speech = new SpeechSynthesisUtterance(text);
+        
+        // Optional: Set voice, pitch, rate, etc.
+        speech.lang = 'en-US';
+        speech.pitch = 1;  // Range between 0 and 2
+        speech.rate = 1.5;   // Range between 0.1 and 2
+        speech.volume = 1; // Range between 0 and 1
 
-      console.log(text);
+        // Speak the text
+        window.speechSynthesis.speak(speech);
+
+        console.log(text);
     } else {
-      alert("Sorry, your browser doesn't support text-to-speech!");
+        alert("Sorry, your browser doesn't support text-to-speech!");
     }
 }
 
@@ -392,7 +397,7 @@ function onResults(results) {
         }else if(exercise[next_ex] == "complete"){
             speakText("Thank you for filling out the form! We appreciate your feedback and will use it to improve your experience with our exercises.");
             showNotification("You're complete!!!");
-            location.href = 'http://localhost:3000/frontend/login_register.html';
+            location.href = 'http://127.0.0.1:3000/frontend/login_register.html';
         }
         
     }
@@ -447,14 +452,16 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 
         if (angle >= 155 && !check_reps && !check_sets){
             check_reps = true;
+            check_angle = true;
             speakText("Raise the weights close to 55 degree!");
         }
         
-        if (angle < 155 && angle > 55){
+        if (angle < 155 && angle > 55 && check_angle){
             speakText("Move the weights a little closer to the target angle!");
+            check_angle = false;
         }
 
-        if (angle <= 55 && check_reps){
+        if (angle <= 55 && check_reps ){
             console.log("angle: ", angle);
             check_reps = false;
             if (Math.abs(shoulder.x - elbow.x) <= 0.1){
@@ -611,17 +618,18 @@ function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_2
             console.log("Check: ", rs);
             if (rs === "correct_up" && !check_reps && !check_sets){
                 check_reps = true;
+                check_angle = true;
                 speakText("Lower your body until elbows form a 90-degree angle.");
             }
 
-            if (rs === "incorrect_up"){
+            if (rs === "incorrect_up" && !check_reps){
                 speakText("Straighten your whole body, keep your hand up.");
                 check_reps = false;
             }
             
-            if (rs === "incorrect_down"){
+            if (rs === "incorrect_down"  && check_reps && check_angle){
                 speakText("Keep your chest close to the ground, your hands form 90-degree angle.");
-                check_reps = true;
+                check_angle = false;
             }
 
             if (rs === "correct_down" && check_reps){
@@ -692,7 +700,7 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
             speakText("Lower your hips, keeping your back straight!")
         }
 
-        if ((angle_hip < 70 && angle_knee < 70) && check_reps){
+        if (angle_hip < 90 && (angle_knee > 80 && angle_knee < 100) && check_reps){
             check_reps = true;
             check_reps = false;
             count_reps -= 1;

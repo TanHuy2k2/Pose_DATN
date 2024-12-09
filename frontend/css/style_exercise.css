@@ -30,9 +30,16 @@
   margin: 15px auto;
   margin-top: -25px;
 }
-
-.exercise-box span {
+.details {
+  display: flex;
+  flex-wrap: wrap; /* Allow spans to wrap if needed */
+  gap: 0.5rem; /* Add spacing between spans */
   font-weight: bold;
+  margin: 10px;
+}
+
+.details span{
+  padding-left: 5px;
 }
 
 /* Form Container */
@@ -241,14 +248,58 @@ body, html {
     margin: 0;
   }
   #camera{
-    height: 95%;
+    height: 22em;
+    border: none;
+    box-shadow: none;
   }
   #mini-container {
     display: flex;
     align-items: center; /* Center camera and canvas */
     justify-content: center;
   }
+  .output_canvas{
+    max-width: 250px;
+  }
 }
 @media (max-width: 768px) {
-
+  .exercise-box{
+    flex-direction: column;
+    align-items: center;
+    height: 5em;
+  }
+  #exercise-name{
+    margin: 5px;
+  }
+}
+@media (max-width: 576px) {
+  .exercise-box{
+    width: 85%;
+  }
+  .details{
+    margin: 3px;
+  }
+  .details span{
+    padding-left: 2px;
+    font-size: 14px;
+  }
+  #camera{
+    margin-left: 25px;
+  }
+}
+@media (max-width: 480px) {
+  .exercise-box{
+    padding: 3px;
+  }
+  .details{
+    margin: 2px;
+    justify-content: center;
+    align-items: center;
+  }
+  .details span{
+    padding-left: 2px;
+    font-size: 14px;
+  }
+  body{
+    margin: 0;
+  }
 }
