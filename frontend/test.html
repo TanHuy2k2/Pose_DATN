@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Push-Up Posture Prediction</title>
+    <title>Test</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0-dev.20241028-dd28f09ce2/dist/ort.min.js"></script>
-    <script src="/frontend/js/check_pushup.js"></script>
     <style>
         body {
             display: block;
@@ -59,26 +58,13 @@
         // Draw landmarks and call predict
         pose.onResults(async (results) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Draw pose landmarks
-            if (results.poseLandmarks) {
-                // Extract normalized landmarks as an array
-                const landmarks = results.poseLandmarks.flatMap(l => [l.x, l.y, l.z]);
+            drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS,
+                    {color: '#00FF00', lineWidth: 1, radius: 2});
 
-                // Convert frame to tensor for ONNX model
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const imageTensor = tf.browser.fromPixels(imageData);
-
-                try {
-                  const a = await check_pushup(imageTensor, landmarks);
-                  console.log(a);
-                } catch (err) {
-                    console.error('Prediction error:', err);
-                }
-
-                imageTensor.dispose();
-            }
+            drawLandmarks(ctx, results.poseLandmarks,
+                    {color: '#FF0000', lineWidth: 0.2, radius: 2});
         });
     </script>
 </body>

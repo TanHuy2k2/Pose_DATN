@@ -8,11 +8,12 @@ const container = document.getElementById('container');
 const formContainer = document.querySelector('.form_container');
 let loginForm = document.getElementById("form");
 const input_name = document.getElementById('name');
-const input_age = document.getElementById('age');
 const input_gender = document.getElementById('gender');
 const input_height = document.getElementById('height');
 const input_weight = document.getElementById('weight');
 const input_level = document.getElementsByName('level');
+const selectBox = document.getElementById('ageSelect');
+
 
 let startAngle = 0;
 const radius = 90;
@@ -71,6 +72,16 @@ worker.onmessage = function(e) {
         }
     }
 };
+
+function showNotification(message) {
+    notification.style.display = "block";
+    notification.textContent = message;
+  
+    // Remove the notification after 5 seconds
+    setTimeout(() => {
+      notification.style.display = "none";
+    }, 3000);
+}
 
 async function onResults(results) {
     // Set the canvas size to match the video dimensions
@@ -134,36 +145,47 @@ async function predictAndStore(tensorImage) {
     // Assuming you have a predict function that returns [age, gender] predictions
     const result = await predict(tensorImage);
 
-    // Push the results to the arrays
-    ar_age.push(result[0]);  // Assuming result[0] is age
-    ar_gender.push(result[1]);  // Assuming result[1] is gender
-
     // If both arrays have 3 predictions each, compute the most common values
-    if (ar_age.length == 3 && ar_gender.length == 3) {
+    if (ar_age.length < 3 && ar_gender.length < 3) {
 
-        console.log(ar_age)
+        // Push the results to the arrays
+        ar_age.push(result[0]);  // Assuming result[0] is age
+        ar_gender.push(result[1]);  // Assuming result[1] is gender
 
-        const age = mostCommon(ar_age);
-        const gender = mostCommon(ar_gender);
+        if (ar_age.length == 3 && ar_gender.length == 3) {
 
-        const [first, last] = age.trim().split("-");
-        if (parseInt(last) < 15){
-            console.log("Sorry but you are not old enough.")
-        }else{
-            // Display the form and populate it with predicted values
-            formContainer.style.display = 'block';
+            console.log(ar_age)
 
-            input_age.value = age;
-            input_gender.value = gender;
+            const uniqueRanges = [...new Set(ar_age)];
 
-            video.style.display = 'none';
-            toggleButton.style.display = 'none';
+            // const age = mostCommon(ar_age);
+            const age = selectBox.value;
+            const gender = mostCommon(ar_gender);
 
-            // Mark the face as processed and stop the camera
-            check = true;
+            const [first, last] = age.trim().split("-");
+            if (parseInt(last) < 15){
+                showNotification("Sorry but you are not old enough.")
+            }else{
+                // Display the form and populate it with predicted values
+                formContainer.style.display = 'block';
+
+                uniqueRanges.forEach(range => {
+                    const option = document.createElement('option');
+                    option.value = range;
+                    option.textContent = range;
+                    selectBox.appendChild(option);
+                });
+
+                input_gender.value = gender;
+
+                video.style.display = 'none';
+                toggleButton.style.display = 'none';
+
+                // Mark the face as processed and stop the camera
+                check = true;
+            }
+            stopCamera();
         }
-        stopCamera();
-        
     }
 }
 
@@ -253,7 +275,7 @@ function mostCommon(arr) {
         .map(([element]) => element);
 
     if (mostCommonElements.length > 1){
-        mostCommonElements = mostCommonElements[0];
+        mostCommonElements = mostCommonElements[1];
     }
     return String(mostCommonElements);
 }
@@ -304,7 +326,7 @@ loginForm.addEventListener("submit", async (e) => {
     // Retrieve user inputs for name, gender, and age
     const name = input_name.value;
     const gender = input_gender.value;
-    const age = input_age.value;
+    const age = selectBox.value;
     const height = input_height.value;
     const weight = input_weight.value;
     let level;

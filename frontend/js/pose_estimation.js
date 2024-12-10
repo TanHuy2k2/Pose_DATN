@@ -276,11 +276,11 @@ function applyEma(currentLandmarks, emaLandmarks, alpha) {
     }));
 }
 
-function draw_Canvas(results, specificLandmarks){
+function draw_Canvas(specificLandmarks){
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    canvasCtx.drawImage(results.image, 0, 0,
+    canvasCtx.drawImage(videoElement, 0, 0,
                           canvasElement.width, canvasElement.height);
     
     specificLandmarks.forEach((landmark, index) => {
@@ -306,7 +306,7 @@ function onResults(results) {
         return;
     }
 
-    if (!isCookieExpired("time", 1/10)) {
+    if (!isCookieExpired("time", 1/30)) {
         exercise = exercise.filter(item => item !== "form");
     }
 
@@ -329,7 +329,7 @@ function onResults(results) {
             }
             
             const specificLandmarks = [11, 12, 13, 14, 15, 16].map(index => emaLandmarks[index]);
-            draw_Canvas(results, specificLandmarks);
+            draw_Canvas(specificLandmarks);
             dumbbell_curl(specificLandmarks[0], specificLandmarks[1], specificLandmarks[2], 
                 specificLandmarks[3], specificLandmarks[4], specificLandmarks[5]
             );
@@ -351,7 +351,7 @@ function onResults(results) {
                 speakText('Place your hands wider than shoulder-width, body straight!');
             }
             const specificLandmarks = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].map(index => emaLandmarks[index]);
-            draw_Canvas(results, specificLandmarks);
+            draw_Canvas(specificLandmarks);
             push_up(specificLandmarks[0], specificLandmarks[1], specificLandmarks[2], 
                 specificLandmarks[3], specificLandmarks[4], specificLandmarks[5], specificLandmarks[6],
                 specificLandmarks[7], specificLandmarks[8], specificLandmarks[9], specificLandmarks[10],
@@ -381,7 +381,7 @@ function onResults(results) {
                 speakText('Stand straight, feet shoulder-width apart, arms extended in front.');
             }
             const specificLandmarks = [11, 12, 23, 24, 25, 26, 27, 28].map(index => emaLandmarks[index]);
-            draw_Canvas(results, specificLandmarks);
+            draw_Canvas(specificLandmarks);
             squat(specificLandmarks[0], specificLandmarks[1], specificLandmarks[2],
                 specificLandmarks[3], specificLandmarks[4], specificLandmarks[5], specificLandmarks[6],
                 specificLandmarks[7]
@@ -498,9 +498,10 @@ function dumbbell_curl(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16){
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
-        canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
+        canvasCtx.fillText(String(Math.round(angle)), Math.round(elbow.x * canvasElement.width), Math.round(elbow.y * canvasElement.height));       
 
     }
+    canvasCtx.restore();
 } 
 
 function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
@@ -568,11 +569,12 @@ function push_up(lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, 
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
-        canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
-        canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
-        canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
+        canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow.x * canvasElement.width), Math.round(elbow.y * canvasElement.height));       
+        canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip.x * canvasElement.width), Math.round(hip.y * canvasElement.height));
+        canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee.x * canvasElement.width), Math.round(knee.y * canvasElement.height));              
 
     }
+    canvasCtx.restore();
 }
 
 function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
@@ -639,7 +641,7 @@ function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_2
             }
         
             if (count_reps == 0 && set_ex){
-                speakText("Rest and prepare for the next rep.!");
+                speakText("Rest and prepare for the next rep!");
                 sets -= 1
                 hasSpoken = false;
                 count_reps = reps;
@@ -666,14 +668,12 @@ function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_2
         
             canvasCtx.font = '18px Arial';
             canvasCtx.fillStyle = '#00FF00';
-            canvasCtx.fillText(String(Math.round(angle_elbow)), Math.round(elbow[0] * canvasElement.width), Math.round(elbow[1] * canvasElement.height));       
-            canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
-            canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
-        
+            canvasCtx.fillText(rs, 15, 30);       
+    
         })
         
     }
-
+    canvasCtx.restore();
 }
 
 function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
@@ -735,9 +735,10 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
 
         canvasCtx.font = '18px Arial';
         canvasCtx.fillStyle = '#00FF00';
-        canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip[0] * canvasElement.width), Math.round(hip[1] * canvasElement.height));
-        canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee[0] * canvasElement.width), Math.round(knee[1] * canvasElement.height));              
+        canvasCtx.fillText(String(Math.round(angle_hip)), Math.round(hip.x * canvasElement.width), Math.round(hip.y * canvasElement.height));
+        canvasCtx.fillText(String(Math.round(angle_knee)), Math.round(knee.x * canvasElement.width), Math.round(knee.y * canvasElement.height));              
     }
+    canvasCtx.restore();
 }
     
 const pose = new Pose({locateFile: (file) => {

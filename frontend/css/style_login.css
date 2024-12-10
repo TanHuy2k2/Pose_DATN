@@ -54,8 +54,8 @@ html {
 .form_container {
     width: 100%;
     max-width: 250px;
-    margin-bottom: 20%;
-    margin-top: -5px;
+    margin-bottom: 0;
+    margin-top: -35px;
     margin-left: 0; /* Align the form on the far left */
     padding: 10px;
     border: 1px solid #ccc;
@@ -64,11 +64,10 @@ html {
     position: absolute;
     left: 0; /* Keep the form on the left edge of the page */
     background-color: #e6e6fa; 
-
 }
 
 /* Input field styling */
-.form_container input[type="text"] {
+.form_container input[type="text"]{
     width: 90%;
     padding: 10px;
     margin: 10px 0;
@@ -76,6 +75,18 @@ html {
     border-radius: 4px;
 }
 
+#ageSelect{
+    width: 99%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#ageSelect option{
+    width: 100%;
+    text-align: left; 
+}
 /* Button styling */
 .form_container button {
     margin-top: 10px;
@@ -147,6 +158,22 @@ html {
     outline-offset: 2px;
 }
 
+#notification-container {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 280px;
+    z-index: 1000;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    animation: slideIn 0.5s forwards, fadeOut 0.5s ease-out 4.5s forwards;
+}
+
 #toggleButton {
     margin-top: 20px;
     padding: 10px 20px;
@@ -201,6 +228,9 @@ html {
     .form_container input[type="text"] {
         width: 80%;
     }
+    #ageSelect{
+        width: 89%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -234,6 +264,9 @@ html {
 
     .form_container input[type="text"] {
         width: 90%;
+    }
+    #ageSelect{
+        width: 99%;
     }
 }
 
