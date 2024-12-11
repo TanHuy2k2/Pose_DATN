@@ -9,7 +9,7 @@
 }
 
 .topnav .icon {
-  color: black;
+  color: red;
   font-size: 18px;
   cursor: pointer;
 }
@@ -299,7 +299,42 @@ body, html {
     padding-left: 2px;
     font-size: 14px;
   }
-  body{
-    margin: 0;
+  #camera{
+    height: 250px;
+    margin-left: 10px;
+  }
+  .output_canvas{
+    width: 50%;
+    height: 180px;
+  }
+  #video_check{
+    width: 40%;
+    height: 180px;
+  }
+}
+@media (max-width: 285px) {
+  .exercise-box{
+    padding: 1px;
+  }
+  .details{
+    margin: 1px;
+    justify-content: center;
+    align-items: center;
+  }
+  .details span{
+    padding-left: 2px;
+    font-size: 14px;
+  }
+  .output_canvas{
+    width: 50%;
+    height: 150px;
+  }
+  #video_check{
+    width: 40%;
+    height: 150px;
+  }
+  #camera{
+    margin-left: 10px;
+    height: 250px;
   }
 }

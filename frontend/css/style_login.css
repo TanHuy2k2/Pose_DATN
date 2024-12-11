@@ -324,7 +324,7 @@ html {
         font-size: 1em; /* Smaller heading size */
     }
     .output_canvas {
-        max-width: 98%; /* Full width for smaller screens */
+        max-width: 95%; /* Full width for smaller screens */
         max-height: 350px; /* Maintain aspect ratio */
     }
 }
