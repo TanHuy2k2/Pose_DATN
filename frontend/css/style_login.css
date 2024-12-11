@@ -76,7 +76,7 @@ html {
 }
 
 #ageSelect{
-    width: 99%;
+    width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -84,9 +84,11 @@ html {
 }
 
 #ageSelect option{
-    width: 100%;
+    width: 200px;
     text-align: left; 
+    border: none;
 }
+
 /* Button styling */
 .form_container button {
     margin-top: 10px;
@@ -226,10 +228,7 @@ html {
         width: 40%; /* Allow more space on medium screens */
     }
     .form_container input[type="text"] {
-        width: 80%;
-    }
-    #ageSelect{
-        width: 89%;
+        width: 90%;
     }
 }
 
@@ -264,9 +263,6 @@ html {
 
     .form_container input[type="text"] {
         width: 90%;
-    }
-    #ageSelect{
-        width: 99%;
     }
 }
 
