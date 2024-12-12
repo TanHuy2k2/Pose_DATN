@@ -148,9 +148,11 @@ body {
   text-align: center;
   background-image: url('/frontend/images/bg_map.png');
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   width: 100%;
   height: 43em;
+  position: relative;
+  margin: 0 auto;
 }
 .section-intro{
   text-align: center;
@@ -225,6 +227,11 @@ body {
   border-radius: 100%;
   width: 48px;
   height: 48px;
+}
+.review-v1-avatar img{
+  max-width: 100%;
+  display: inline-block;
+  vertical-align: middle;
 }
 .achievements{
   justify-content: center;
@@ -315,4 +322,63 @@ body {
   margin-top: 20px;
   font-size: 14px;
   color: #666;
+}
+@media (max-width: 1200px) {
+  .testimonial_1{
+    height: 80%;
+  }
+  .global-map{
+    height: 38em;
+  }
+  .review_v1._1, .review_v1._2, .review_v1._3, .review_v1._4, .review_v1._5, .review_v1._6, .review_v1._7{
+    display: none;
+  }
+  .achievements{
+    margin-top: 30px;
+  }
+  .achievement-number-2{
+    font-size: 30px;
+  }
+}
+@media (max-width: 768px) {
+  .testimonial_1{
+    height: 56%;
+  }
+  .global-map{
+    height: 24em;
+  }
+  .achievement-number-2{
+    font-size: 27px;
+  }
+  .achievements{
+    margin-top: 26px;
+  }
+}
+@media (max-width: 576px) {
+  .testimonial_1{
+    height: 50%;
+  }
+  .global-map{
+    height: 20em;
+  }
+  .achievement-number-2{
+    font-size: 24px;
+  }
+  .achievements{
+    margin-top: 24px;
+  }
+}
+@media (max-width: 480px) {
+  .testimonial_1{
+    height: 40%;
+  }
+  .global-map{
+    height: 15em;
+  }
+  .achievement-number-2{
+    font-size: 20px;
+  }
+  .achievements{
+    margin-top: 15px;
+  }
 }
