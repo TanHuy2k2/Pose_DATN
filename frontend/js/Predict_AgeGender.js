@@ -1,6 +1,6 @@
 async function predict(imageTensor) {
     // Load the ONNX model
-    const session = await ort.InferenceSession.create('../model/MobileNetV3L.onnx');
+    const session = await ort.InferenceSession.create('../model/MobileNetV3L_2.onnx');
 
     // Preprocess the image using TensorFlow.js
     let imgPre = imageTensor
