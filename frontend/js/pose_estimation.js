@@ -291,6 +291,10 @@ function draw_Canvas(specificLandmarks){
         canvasCtx.arc(x, y, 4, 0, 2 * Math.PI);
         canvasCtx.fillStyle = 'red';
         canvasCtx.fill();
+
+        // canvasCtx.font = '20px Arial';
+        // canvasCtx.fillStyle = 'black';
+        // canvasCtx.fillText(`abc`, 60 , 20);
     });
     // // Only overwrite existing pixels.
     // drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
@@ -599,9 +603,9 @@ function push_up_test(img, lm_11, lm_12, lm_13, lm_14, lm_15, lm_16, lm_23, lm_2
     }   
 
     if (shoulder && elbow && wrist && hip && knee && ankle){
-        elbow_angle = calculate_angle(shoulder, elbow, wrist)
-        hip_angle = calculate_angle(shoulder, hip, knee)
-        knee_angle = calculate_angle(hip, knee, ankle)
+        elbow_angle = calculate_angle_3d(shoulder, elbow, wrist)
+        hip_angle = calculate_angle_3d(shoulder, hip, knee)
+        knee_angle = calculate_angle_3d(hip, knee, ankle)
 
         const angles =  [elbow_angle, hip_angle, knee_angle];
 
@@ -692,8 +696,8 @@ function squat(lm_11, lm_12, lm_23, lm_24, lm_25, lm_26, lm_27, lm_28){
     }   
 
     if (shoulder && hip && knee && ankle){
-        const angle_hip = calculate_angle(shoulder, hip, knee); 
-        const angle_knee = calculate_angle(hip, knee, ankle); 
+        const angle_hip = calculate_angle_3d(shoulder, hip, knee); 
+        const angle_knee = calculate_angle_3d(hip, knee, ankle); 
 
         if ((160 < angle_hip && angle_hip <= 180 && 160 < angle_knee && angle_knee <= 180) && !check_reps && !check_sets){
             check_reps = true;
